@@ -1,0 +1,3 @@
+[submodule "submodules/CodeMirror"]
+	path = submodules/CodeMirror
+	url = https://github.com/bitjump-io/CodeMirror.git
