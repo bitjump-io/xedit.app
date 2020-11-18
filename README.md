@@ -1,2 +1,2 @@
 # xedit.app
-Web app to edit, search and diff large files.
+Texteditor in the browser to edit, search and diff files of any size.
