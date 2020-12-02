@@ -1,0 +1,1 @@
+alert("This site requires modueles support. Please use a modern browser as Firefox, Chrome, Edge or Safari.")
