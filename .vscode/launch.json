@@ -11,7 +11,7 @@
             "webRoot": "${workspaceFolder}/src/",
             "disableNetworkCache": true,
             "url": "http://localhost:8080",
-            "preLaunchTask": "start http-server"
+            "preLaunchTask": "start webpack-dev-server"
         }
     ]
 }

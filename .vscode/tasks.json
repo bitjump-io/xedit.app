@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "start http-server",
+            "label": "start webpack-dev-server",
             "type": "shell",
-            "command": "pwd & cd src && http-server --port 8080 -c-1",
+            "command": "npm start",
             "presentation": {
                 "reveal": "always",
                 "panel": "new"
@@ -23,8 +23,8 @@
                 },
                 "background": {
                     "activeOnStart": false,
-                    "beginsPattern": "^Starting up http-server, serving.*",
-                    "endsPattern": "Hit CTRL-C to stop the server"
+                    "beginsPattern": "webpack-dev-server",
+                    "endsPattern": "Compiled successfully"
                 }
             }
         }
