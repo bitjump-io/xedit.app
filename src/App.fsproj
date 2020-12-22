@@ -5,6 +5,7 @@
     <ItemGroup>
         <Compile Include="App.fs" />
         <Compile Include="Main.fs" />
+        <Compile Include="MonacoEditor.fs" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Fable.Elmish.Debugger" Version="3.0.3" />

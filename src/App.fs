@@ -5,6 +5,8 @@ open Elmish
 //open Zanaptak.TypedCssClasses
 open Feliz.MaterialUI
 
+open MonacoEditor
+
 
 type State = { Count: int }
 
