@@ -3,9 +3,10 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
+    <!-- NOTE: THE ORDER IS IMPORTANT -->
+        <Compile Include="MonacoEditor.fs" />
         <Compile Include="App.fs" />
         <Compile Include="Main.fs" />
-        <Compile Include="MonacoEditor.fs" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Fable.Elmish.Debugger" Version="3.0.3" />

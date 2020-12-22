@@ -5,9 +5,6 @@ open Elmish
 //open Zanaptak.TypedCssClasses
 open Feliz.MaterialUI
 
-open MonacoEditor
-
-
 type State = { Count: int }
 
 type Msg =
@@ -68,6 +65,21 @@ let useStyles = Styles.makeStyles(fun styles theme ->
   |}
 )
 
+let EditorComponent = React.functionComponent(fun (model, dispatch) ->
+  let divEl = React.useElementRef()
+  React.useEffectOnce(fun () ->
+    let editor =
+      if divEl.current.IsSome
+        then Some (MonacoEditor.Editor.create divEl.current.Value)
+      else None
+    React.createDisposable(fun () -> if editor.IsSome then editor.Value.dispose())
+  )
+  Html.div [
+    prop.style [ style.height 300; style.width 600 ]
+    prop.ref divEl
+  ]
+)
+
 let app = React.functionComponent(fun (model, dispatch) ->
     let classes = useStyles ()
     Mui.themeProvider [
@@ -91,6 +103,7 @@ let app = React.functionComponent(fun (model, dispatch) ->
                             ]
                         ]
                     ]
+                    EditorComponent(model, dispatch)
                 ]
             ]
         ]
