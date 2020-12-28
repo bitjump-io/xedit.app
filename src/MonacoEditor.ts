@@ -10,42 +10,49 @@ import * as monaco from 'monaco-editor';
 
 // @ts-ignore
 self.MonacoEnvironment = {
-	getWorkerUrl: function (moduleId, label) {
-		if (label === 'json') {
-			return './json.worker.js';
-		}
-		if (label === 'css') {
-			return './css.worker.js';
-		}
-		if (label === 'html') {
-			return './html.worker.js';
-		}
-		if (label === 'typescript' || label === 'javascript') {
-			return './ts.worker.js';
-		}
-		return './editor.worker.js';
-	}
+  getWorkerUrl: function (moduleId, label) {
+    if (label === 'json') {
+      return './json.worker.js';
+    }
+    if (label === 'css') {
+      return './css.worker.js';
+    }
+    if (label === 'html') {
+      return './html.worker.js';
+    }
+    if (label === 'typescript' || label === 'javascript') {
+      return './ts.worker.js';
+    }
+    return './editor.worker.js';
+  }
 };
+
+export interface IDimension {
+  width: number;
+  height: number;
+}
 
 // Monaco editor methods expoed to F#.
 export interface IMonacoEditor {
-    dispose(): void;
+  dispose(): void;
+  layout(dimension?: IDimension): void;
 }
 
-export function create(elem: HTMLElement): IMonacoEditor {
-    let editor = monaco.editor.create(elem, {
-        theme: "vs-dark",
-        scrollbar: {
-            verticalScrollbarSize: 30,
-            horizontalScrollbarSize: 30
-        },
-        minimap: {
-            enabled: false
-        },
-        value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-        language: 'javascript'
-    });
-    return editor;
+export function create(elem: HTMLElement, dimension: IDimension): IMonacoEditor {
+  let editor = monaco.editor.create(elem, {
+    theme: "vs-dark",
+    scrollbar: {
+      verticalScrollbarSize: 25,
+      horizontalScrollbarSize: 25
+    },
+    minimap: {
+      enabled: false
+    },
+	dimension: dimension,
+    value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+	language: 'javascript'
+  });
+  return editor;
 }
 
 

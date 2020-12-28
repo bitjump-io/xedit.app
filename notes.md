@@ -1,10 +1,7 @@
 add monaco editor
 `npm install monaco-editor`
 
-install tool to generate f# fable interfaces from typescript
-`yarn global add ts2fable@next`
+Feliz samples
 
-generate interfaces
-`ts2fable node_modules/monaco-editor/monaco.d.ts src/MonacoEditor.fs`
-
-add MonacoEditor.fs to App.fsproj
+- https://github.com/cmeeren/Feliz.MaterialUI/tree/master/docs-app/src
+- https://github.com/Zaid-Ajaj/Feliz/blob/master/docs/Examples.fs

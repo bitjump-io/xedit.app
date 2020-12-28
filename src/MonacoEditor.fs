@@ -6,10 +6,15 @@ open Fable.Core.JS
 open Browser.Types
 
 type IExports =
-    abstract create: elem: HTMLElement -> IMonacoEditor
+  abstract create: elem: HTMLElement * dimension: IDimension -> IMonacoEditor
 
 [<ImportAll("./MonacoEditor")>]
 let Editor: IExports = jsNative
 
 type IMonacoEditor =
-    abstract dispose: unit -> unit
+  abstract dispose: unit -> unit
+  abstract layout: dimension: IDimension -> unit
+
+type IDimension =
+  abstract width: int
+  abstract height: int
