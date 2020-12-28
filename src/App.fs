@@ -6,39 +6,39 @@ open Elmish
 open Feliz.MaterialUI
 open Elmish
 open Feliz.ElmishComponents
-open MonacoEditor
 open Browser
 open Browser.Types
 
-// Holds the editor's width and size state. Also used to update the editor's size.
-type Dimension =
-  { w: int; h: int }
-  interface IDimension with
-      member x.width: int = x.w
-      member x.height: int = x.h
+
+// Holds the editor's width and size state.
+type Dimension = { Width: int; Height: int }
+
+type EditorOptions = { WrapText: bool }
 
 // Model holds the current state.
-type Model = { count: int; editor: option<IMonacoEditor>; editorDimension: Dimension }
+type Model = { Count: int; Editor: ME.IMonacoEditor option; EditorDimension: Dimension; EditorOptions: EditorOptions }
 
 // Msg is an action that we need to apply to the current state.
 type Msg =
   | Increment
   | Decrement
   | ResizeEditor of Dimension
-  | EditorCreated of IMonacoEditor * Dimension
+  | EditorCreated of ME.IMonacoEditor * Dimension
 
 // The init function will produce an initial state once the program starts running.  It can take any arguments.
-let init () = { count = 0; editor = None; editorDimension = { w = 0; h = 0} }, Cmd.none
+let init () = { Count = 0; Editor = None; EditorDimension = { Width = 0; Height = 0}; EditorOptions = { WrapText = false } }, Cmd.none
 
 // The update function will receive the change required by Msg, and the current state. It will produce a new state and potentially new command(s).
 let update (msg: Msg) (state: Model) =
   match msg with
-  | Increment -> { state with count = state.count + 1 }, Cmd.none
-  | Decrement -> { state with count = state.count - 1 }, Cmd.none
+  | Increment -> { state with Count = state.Count + 1 }, Cmd.none
+  | Decrement -> { state with Count = state.Count - 1 }, Cmd.none
   | ResizeEditor dimension ->
-    state.editor.Value.layout dimension
-    { state with editorDimension = dimension }, Cmd.none
-  | EditorCreated (editorInst, dimension) -> { state with editor = Some editorInst; editorDimension = dimension }, Cmd.none
+    match state.Editor with
+    | Some editorInst -> editorInst.layout({ width = dimension.Width; height = dimension.Height })
+    | None -> ()
+    { state with EditorDimension = dimension }, Cmd.none
+  | EditorCreated (editorInst, dimension) -> { state with Editor = Some editorInst; EditorDimension = dimension }, Cmd.none
 
 // Themes documentation links
 // - https://cmeeren.github.io/Feliz.MaterialUI/#usage/themes
@@ -48,7 +48,7 @@ let defaultTheme = Styles.createMuiTheme()
 let darkTheme = Styles.createMuiTheme([
   theme.palette.type'.dark
   theme.palette.primary Colors.lightBlue
-  theme.palette.secondary Colors.pink
+  theme.palette.secondary Colors.blue
   theme.palette.background.default' defaultTheme.palette.grey.``900``
   theme.typography.h1.fontSize "3rem"
   theme.typography.h2.fontSize "2rem"
@@ -89,12 +89,12 @@ let useStyles = Styles.makeStyles(fun styles theme ->
 let EditorComponent = React.functionComponent(fun (state, dispatch) ->
   let divEl = React.useElementRef()
   React.useEffectOnce(fun () ->
-    let dimension = { w = 800; h = 600 }
+    let dimension = { Width = 800; Height = 600 }
     let editor = 
       match divEl.current with
-        | Some x -> Some (Editor.create (x, dimension))
-        | None -> None
-    if editor.IsSome then (EditorCreated (editor.Value, dimension) |> dispatch)
+      | Some x -> Some (ME.Editor.create(x, { width = dimension.Width; height = dimension.Height }))
+      | None -> None
+    if editor.IsSome then EditorCreated (editor.Value, dimension) |> dispatch
     React.createDisposable(fun () -> if editor.IsSome then editor.Value.dispose())
   )
   Html.div [
@@ -120,21 +120,36 @@ let app = React.functionComponent(fun (state, dispatch) ->
       Html.div [
         prop.className classes.rootDiv
         prop.children [
-          Html.input [
-            prop.type' "file"
-            prop.multiple true
-            prop.style [style.display.none]
+          Html.div [
+            Html.input [
+              prop.type' "file"
+              prop.multiple true
+              prop.style [style.display.none]
+            ]
+            Html.div [
+              prop.style [style.fontSize 24]
+              prop.children [
+                Html.text "Drag & drop anywhere to open files or use the "
+                MuiEx.buttonOutlined "file picker"
+                MuiEx.buttonOutlined ("test resize", fun _ -> ResizeEditor { Width = 900; Height = 400 } |> dispatch)
+                Html.text (sprintf "Current editor size w: %i, h: %i" state.EditorDimension.Width state.EditorDimension.Height)
+              ]
+            ]
           ]
           Html.div [
-            prop.style [style.fontSize 24]
-            prop.children [
-              Html.text "Drag & drop anywhere to open files or use the "
-              MuiEx.buttonOutlined "file picker"
-              MuiEx.buttonOutlined ("test resize", fun _ -> ResizeEditor { w = 900; h = 400 } |> dispatch)
-              Html.text (sprintf "Current editor size w: %i, h: %i" state.editorDimension.w state.editorDimension.h)
+            Mui.iconButton [ 
+              iconButton.children (Icons.wrapTextIcon [ icon.color.secondary ]) 
             ]
           ]
           EditorComponent(state, dispatch)
+          Html.div [
+            Html.text "Tipps"
+            Html.ul [
+              Html.li "you can select columns by holding down Shift + Alt, then click and drag with the mouse."
+              Html.li "you can use multiple cursors by holding down Alt, then click with the mouse."
+            ]
+          ]
+
         ]
       ]
     ]

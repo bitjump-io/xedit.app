@@ -27,33 +27,58 @@ self.MonacoEnvironment = {
   }
 };
 
-export interface IDimension {
+export class Dimension {
   width: number;
   height: number;
 }
 
+// export interface IEditorOptions {
+//   wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
+//   wordWrapColumn?: number;
+//   renderControlCharacters?: boolean;
+//   fontSize?: number;
+//   tabSize?: number; // 4
+//   insertSpaces?: boolean; // true
+// }
+
 // Monaco editor methods expoed to F#.
 export interface IMonacoEditor {
   dispose(): void;
-  layout(dimension?: IDimension): void;
+  layout(dimension: Dimension): void;
 }
 
-export function create(elem: HTMLElement, dimension: IDimension): IMonacoEditor {
-  let editor = monaco.editor.create(elem, {
-    theme: "vs-dark",
-    scrollbar: {
-      verticalScrollbarSize: 25,
-      horizontalScrollbarSize: 25
-    },
-    minimap: {
-      enabled: false
-    },
-	dimension: dimension,
+class MonacoEditor implements IMonacoEditor {
+  editor: monaco.editor.IStandaloneCodeEditor;
+
+  constructor(elem: HTMLElement, dimension: Dimension) {
+    this.editor = monaco.editor.create(elem, {
+      theme: "vs-dark",
+      scrollbar: {
+        verticalScrollbarSize: 25,
+        horizontalScrollbarSize: 25
+      },
+      minimap: {
+        enabled: false
+      },
+    dimension,
     value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-	language: 'javascript'
-  });
-  return editor;
+    language: 'javascript'
+    });
+  }
+
+  dispose(): void {
+    this.editor.dispose();
+  }
+
+  layout(dimension: Dimension): void {
+    this.editor.layout(dimension)
+  }
+
+  setWordWrap(value: 'off' | 'on' | 'wordWrapColumn' | 'bounded'): void {
+    this.editor.updateOptions({ wordWrap: value });
+  }
 }
 
-
-let elem = document.getElementById('container');
+export function create(elem: HTMLElement, dimension: Dimension): IMonacoEditor {
+  return new MonacoEditor(elem, dimension);
+}
