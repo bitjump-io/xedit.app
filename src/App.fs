@@ -6,6 +6,9 @@ open Feliz.MaterialUI
 open Browser
 open Browser.Types
 
+[<Literal>]
+let FileInputElementId = "file-input"
+
 // Holds the editor's width and size state.
 type Dimension = { Width: int; Height: int }
 
@@ -21,6 +24,8 @@ type Msg =
   | ResizeEditor of Dimension
   | EditorCreated of ME.IMonacoEditor * Dimension
   | ToggleWrapText
+  | OpenFilePicker
+  | FilesAdded of File list
 
 // The init function will produce an initial state once the program starts running.  It can take any arguments.
 let init () =
@@ -53,6 +58,13 @@ let update (msg: Msg) (state: Model) =
     | Some editorInst -> editorInst.setWordWrap(not state.EditorOptions.WrapText)
     | None -> ()
     { state with EditorOptions = updateEditorOptions msg state.EditorOptions }, Cmd.none
+  | OpenFilePicker ->
+    // The default html file picker is not nice so it is displayed invisible and the click event is triggered here.
+    document.getElementById(FileInputElementId).click()
+    state, Cmd.none
+  | FilesAdded files ->
+    printfn "files added %A" (files.[0].name)
+    state, Cmd.none
 
 // Styles documentation links
 // - https://github.com/cmeeren/Feliz.MaterialUI/blob/master/docs-app/public/pages/samples/sign-in/SignIn.fs
@@ -117,15 +129,17 @@ let app = React.functionComponent(fun (state, dispatch) ->
         prop.children [
           Html.div [
             Html.input [
+              prop.id FileInputElementId
               prop.type' "file"
               prop.multiple true
               prop.style [style.display.none]
+              prop.onChange (FilesAdded >> dispatch)
             ]
             Html.div [
               prop.style [style.fontSize 24]
               prop.children [
                 Html.text "Drag & drop anywhere to open files or use the "
-                MuiEx.buttonOutlined "file picker"
+                MuiEx.buttonOutlined ("file picker", fun _ -> dispatch OpenFilePicker)
                 MuiEx.buttonOutlined ("test resize", fun _ -> ResizeEditor { Width = 900; Height = 400 } |> dispatch)
                 Html.text (sprintf "Current editor size w: %i, h: %i" state.EditorDimension.Width state.EditorDimension.Height)
               ]
