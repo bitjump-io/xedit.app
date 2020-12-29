@@ -2,13 +2,9 @@ module App
 
 open Feliz
 open Elmish
-//open Zanaptak.TypedCssClasses
 open Feliz.MaterialUI
-open Elmish
-open Feliz.ElmishComponents
 open Browser
 open Browser.Types
-
 
 // Holds the editor's width and size state.
 type Dimension = { Width: int; Height: int }
@@ -24,9 +20,22 @@ type Msg =
   | Decrement
   | ResizeEditor of Dimension
   | EditorCreated of ME.IMonacoEditor * Dimension
+  | ToggleWrapText
 
 // The init function will produce an initial state once the program starts running.  It can take any arguments.
-let init () = { Count = 0; Editor = None; EditorDimension = { Width = 0; Height = 0}; EditorOptions = { WrapText = false } }, Cmd.none
+let init () =
+  { Count = 0;
+    Editor = None;
+    EditorDimension = { Width = 0; Height = 0 };
+    EditorOptions = { WrapText = false }
+  }, 
+  Cmd.none
+
+// Helper to update nested state.
+let updateEditorOptions (msg: Msg) (state: EditorOptions) =
+  match msg with
+  | ToggleWrapText -> { state with WrapText = not state.WrapText }
+  | _ -> failwith (sprintf "No case implemented to update EditorOptions for message %A" msg)
 
 // The update function will receive the change required by Msg, and the current state. It will produce a new state and potentially new command(s).
 let update (msg: Msg) (state: Model) =
@@ -39,34 +48,11 @@ let update (msg: Msg) (state: Model) =
     | None -> ()
     { state with EditorDimension = dimension }, Cmd.none
   | EditorCreated (editorInst, dimension) -> { state with Editor = Some editorInst; EditorDimension = dimension }, Cmd.none
-
-// Themes documentation links
-// - https://cmeeren.github.io/Feliz.MaterialUI/#usage/themes
-// - https://material-ui.com/customization/theming/
-let defaultTheme = Styles.createMuiTheme()
-
-let darkTheme = Styles.createMuiTheme([
-  theme.palette.type'.dark
-  theme.palette.primary Colors.lightBlue
-  theme.palette.secondary Colors.blue
-  theme.palette.background.default' defaultTheme.palette.grey.``900``
-  theme.typography.h1.fontSize "3rem"
-  theme.typography.h2.fontSize "2rem"
-  theme.typography.h3.fontSize "1.5rem"
-
-  theme.overrides.muiAppBar.colorDefault [
-    style.backgroundColor defaultTheme.palette.grey.A400
-  ]
-  theme.overrides.muiPaper.root [
-    style.backgroundColor defaultTheme.palette.grey.A400
-  ]
-  theme.overrides.muiDrawer.paper [
-    style.backgroundColor defaultTheme.palette.grey.``900``
-  ]
-  theme.props.muiAppBar [
-    appBar.color.default'
-  ]
-])
+  | ToggleWrapText ->
+    match state.Editor with
+    | Some editorInst -> editorInst.setWordWrap(not state.EditorOptions.WrapText)
+    | None -> ()
+    { state with EditorOptions = updateEditorOptions msg state.EditorOptions }, Cmd.none
 
 // Styles documentation links
 // - https://github.com/cmeeren/Feliz.MaterialUI/blob/master/docs-app/public/pages/samples/sign-in/SignIn.fs
@@ -86,6 +72,7 @@ let useStyles = Styles.makeStyles(fun styles theme ->
   |}
 )
 
+// The MonacoEditor as a react component.
 let EditorComponent = React.functionComponent(fun (state, dispatch) ->
   let divEl = React.useElementRef()
   React.useEffectOnce(fun () ->
@@ -103,6 +90,7 @@ let EditorComponent = React.functionComponent(fun (state, dispatch) ->
   ]
 )
 
+// Material UI extensions.
 type MuiEx =
   static member inline buttonOutlined (value: string, ?onClick: MouseEvent -> unit) =
     Mui.button [
@@ -111,11 +99,18 @@ type MuiEx =
       if onClick.IsSome
         then prop.onClick onClick.Value
     ]
+  static member withTooltip (title: string, element: ReactElement) =
+    Mui.tooltip [
+      tooltip.title title
+      tooltip.enterDelay 700
+      tooltip.children(element)
+    ]
 
+// Website markup definition.
 let app = React.functionComponent(fun (state, dispatch) ->
   let classes = useStyles ()
   Mui.themeProvider [
-    themeProvider.theme darkTheme
+    themeProvider.theme Themes.darkTheme
     themeProvider.children [
       Html.div [
         prop.className classes.rootDiv
@@ -137,19 +132,22 @@ let app = React.functionComponent(fun (state, dispatch) ->
             ]
           ]
           Html.div [
-            Mui.iconButton [ 
-              iconButton.children (Icons.wrapTextIcon [ icon.color.secondary ]) 
-            ]
+            MuiEx.withTooltip (
+              "Wrap text",
+              Mui.iconButton [ 
+                prop.onClick (fun _ -> dispatch ToggleWrapText)
+                iconButton.children (Icons.wrapTextIcon [ if state.EditorOptions.WrapText then icon.color.secondary else () ]) 
+              ])
           ]
           EditorComponent(state, dispatch)
           Html.div [
             Html.text "Tipps"
             Html.ul [
-              Html.li "you can select columns by holding down Shift + Alt, then click and drag with the mouse."
-              Html.li "you can use multiple cursors by holding down Alt, then click with the mouse."
+              Html.li "To see the context menu, right-click with the mouse."
+              Html.li "Select columns (column mode) by holding down Shift + Alt, then click and drag with the mouse."
+              Html.li "Use multiple cursors by holding down Alt, then click with the mouse."
             ]
           ]
-
         ]
       ]
     ]

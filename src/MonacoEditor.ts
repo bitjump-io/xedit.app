@@ -74,8 +74,9 @@ class MonacoEditor implements IMonacoEditor {
     this.editor.layout(dimension)
   }
 
-  setWordWrap(value: 'off' | 'on' | 'wordWrapColumn' | 'bounded'): void {
-    this.editor.updateOptions({ wordWrap: value });
+  // 'off' | 'on' | 'wordWrapColumn' | 'bounded'
+  setWordWrap(value: boolean): void {
+    this.editor.updateOptions({ wordWrap: (value === true ? 'on' : 'off') });
   }
 }
 

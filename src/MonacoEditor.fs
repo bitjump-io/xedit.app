@@ -14,7 +14,7 @@ let Editor: IExports = jsNative
 type IMonacoEditor =
   abstract dispose: unit -> unit
   abstract layout: dimension: Dimension -> unit
-  abstract setWordWrap: value: string -> unit
+  abstract setWordWrap: value: bool -> unit
 
 // fsharplint:disable-next-line
 type Dimension = { width: int; height: int }

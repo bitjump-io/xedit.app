@@ -6,6 +6,7 @@
     <!-- NOTE: THE ORDER IS IMPORTANT -->
         <Compile Include="MonacoEditor.fs" />
         <Compile Include="Icons.fs" />
+        <Compile Include="Themes.fs" />
         <Compile Include="App.fs" />
         <Compile Include="Main.fs" />
     </ItemGroup>
