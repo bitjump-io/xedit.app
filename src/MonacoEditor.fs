@@ -16,4 +16,5 @@ type IMonacoEditor =
   abstract layout: dimension: Dimension -> unit
   abstract setWordWrap: value: string -> unit
 
+// fsharplint:disable-next-line
 type Dimension = { width: int; height: int }
