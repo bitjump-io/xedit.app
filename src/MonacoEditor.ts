@@ -41,10 +41,8 @@ export class Dimension {
 //   insertSpaces?: boolean; // true
 // }
 
-// Monaco editor methods expoed to F#.
+// Monaco editor instance methods exposed to F#.
 export interface IMonacoEditor {
-  dispose(): void;
-  layout(dimension: Dimension): void;
 }
 
 class MonacoEditor implements IMonacoEditor {
@@ -82,4 +80,18 @@ class MonacoEditor implements IMonacoEditor {
 
 export function create(elem: HTMLElement, dimension: Dimension): IMonacoEditor {
   return new MonacoEditor(elem, dimension);
+}
+
+export function dispose(editor: IMonacoEditor): void {
+  (editor as MonacoEditor).dispose();
+}
+
+// The F# signature is a curried function. It gets compiled to a function call with all arguments passed at once.
+export function layout(dimension: Dimension, editor: IMonacoEditor): void  {
+  (editor as MonacoEditor).layout(dimension);
+}
+
+// The F# signature is a curried function. It gets compiled to a function call with all arguments passed at once.
+export function setWordWrap(value: boolean, editor: IMonacoEditor): void {
+  (editor as MonacoEditor).setWordWrap(value);
 }

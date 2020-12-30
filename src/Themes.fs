@@ -1,5 +1,5 @@
 module Themes
-
+open Fable.Core.JsInterop
 open Feliz
 open Feliz.MaterialUI
 
@@ -8,10 +8,11 @@ open Feliz.MaterialUI
 // - https://material-ui.com/customization/theming/
 let defaultTheme = Styles.createMuiTheme()
 
+
 let darkTheme = Styles.createMuiTheme([
   theme.palette.type'.dark
-  theme.palette.primary Colors.lightBlue
-  theme.palette.secondary Colors.blue
+  theme.palette.primary Colors.blue
+  theme.palette.secondary Colors.teal
   theme.palette.background.default' defaultTheme.palette.grey.``900``
   theme.typography.h1.fontSize "3rem"
   theme.typography.h2.fontSize "2rem"
