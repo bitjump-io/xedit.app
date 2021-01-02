@@ -10,6 +10,8 @@ type IExports =
   abstract dispose: editor: IMonacoEditor -> unit
   abstract layout: dimension: Dimension -> editor: IMonacoEditor -> unit
   abstract setWordWrap: value: bool -> editor: IMonacoEditor -> unit
+  abstract setValue: newValue: string -> editor: IMonacoEditor -> unit
+  abstract setLanguage: languageId: string -> editor: IMonacoEditor -> unit
 
 [<ImportAll("./MonacoEditor")>]
 let Editor: IExports = jsNative

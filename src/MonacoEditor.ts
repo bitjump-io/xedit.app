@@ -58,9 +58,13 @@ class MonacoEditor implements IMonacoEditor {
       minimap: {
         enabled: false
       },
-    dimension,
-    value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-    language: 'javascript'
+      dimension,
+      padding: {
+        top: 5,
+        bottom: 5
+      },
+      value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+      language: "javascript"
     });
   }
 
@@ -75,6 +79,26 @@ class MonacoEditor implements IMonacoEditor {
   // 'off' | 'on' | 'wordWrapColumn' | 'bounded'
   setWordWrap(value: boolean): void {
     this.editor.updateOptions({ wordWrap: (value === true ? 'on' : 'off') });
+  }
+
+  setValue(newValue: string): void {
+    let model = this.editor.getModel();
+    if (model) {
+      model.setValue(newValue);
+    }
+    else {
+      console.error("model not set in MonacoEditor.setValue method.");
+    }
+  }
+
+  setLanguage(languageId: string): void {
+    let model = this.editor.getModel();
+    if (model) {
+      monaco.editor.setModelLanguage(model, languageId);
+    }
+    else {
+      console.error("model not set in MonacoEditor.setLanguage method.");
+    }
   }
 }
 
@@ -94,4 +118,12 @@ export function layout(dimension: Dimension, editor: IMonacoEditor): void  {
 // The F# signature is a curried function. It gets compiled to a function call with all arguments passed at once.
 export function setWordWrap(value: boolean, editor: IMonacoEditor): void {
   (editor as MonacoEditor).setWordWrap(value);
+}
+
+export function setValue(newValue: string, editor: IMonacoEditor): void {
+  (editor as MonacoEditor).setValue(newValue);
+}
+
+export function setLanguage(languageId: string, editor: IMonacoEditor): void {
+  (editor as MonacoEditor).setLanguage(languageId);
 }

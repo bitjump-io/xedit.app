@@ -8,12 +8,12 @@ open Feliz.MaterialUI
 // - https://material-ui.com/customization/theming/
 let defaultTheme = Styles.createMuiTheme()
 
-
 let darkTheme = Styles.createMuiTheme([
   theme.palette.type'.dark
   theme.palette.primary Colors.blue
   theme.palette.secondary Colors.teal
   theme.palette.background.default' defaultTheme.palette.grey.``900``
+  theme.palette.background.paper "#1e1e1e"
   theme.typography.h1.fontSize "3rem"
   theme.typography.h2.fontSize "2rem"
   theme.typography.h3.fontSize "1.5rem"
