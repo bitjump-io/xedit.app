@@ -21,15 +21,36 @@ let debugger () : unit = jsNative
 
 type Height = | Height of int
 
+[<StringEnum>]
+type EditorLanguage =
+  | PlainText
+  | JavaScript
+  member x.displayText =
+    match x with
+    | PlainText -> "Plain text"
+    | JavaScript -> "JavaScript"
+
 type EditorOptions = { WrapText: bool }
 
-//import ThemeContext from './ThemeContext';
-// export default function useTheme() {
-//   var theme = React.useContext(ThemeContext);
-//let ThemeContext = React.createContext ("theme", Themes.darkTheme)
+[<RequireQualifiedAccess>]
+type ControlId =
+  | None
+  | WrapText
+  | EditorLanguage
+
+type EditorLanguageTooltip = { ControlId: ControlId; IsEnterDelayExpired: bool; IsExitDelayExpired: bool }
 
 // Model holds the current state.
-type Model = { SelectedTabId: int; Editor: IMonacoEditor option; EditorHeight: int; EditorOptions: EditorOptions; WindowInnerWidth: float; DevicePixelRatio: float; Debouncer: Debouncer.State }
+type Model = 
+  { SelectedTabId: int
+    Editor: IMonacoEditor option
+    EditorHeight: int
+    EditorOptions: EditorOptions
+    EditorLanguage: EditorLanguage
+    ShowTooltip: EditorLanguageTooltip
+    WindowInnerWidth: float
+    DevicePixelRatio: float
+    Debouncer: Debouncer.State }
 
 // Msg is an action that we need to apply to the current state.
 type Msg =
@@ -41,12 +62,18 @@ type Msg =
   | DebouncerSelfMsg of Debouncer.SelfMessage<Msg> // This is the message used by the Debouncer.
   | EndOfWindowWidthChaned // Message we want to debounce.
   | TabChanged of int
+  | EditorLanguageChanged of EditorLanguage
+  | ShowTooltipChanged of ControlId
+  | EditorLanguageTooltipIsEnterDelayExpired of bool
+  | EditorLanguageTooltipIsExitDelayExpired of bool
 
 // The init function will produce an initial state once the program starts running.  It can take any arguments.
 let init () =
   { Editor = None
     EditorHeight = 0
     EditorOptions = { WrapText = false }
+    EditorLanguage = PlainText
+    ShowTooltip = { ControlId = ControlId.None; IsEnterDelayExpired = false; IsExitDelayExpired = true }
     WindowInnerWidth = window.innerWidth
     DevicePixelRatio = window.devicePixelRatio
     Debouncer = Debouncer.create()
@@ -65,11 +92,22 @@ let getElementById id =
 let click (el: HTMLElement) =
   el.click()
 
-// Helper to update nested state.
+// Helpers to update nested state.
 let updateEditorOptions (msg: Msg) (model: EditorOptions) =
   match msg with
   | ToggleWrapText -> { model with WrapText = not model.WrapText }, Cmd.none
   | _ -> failwith (sprintf "No case implemented to update EditorOptions for message %A" msg)
+
+  // Helper to update nested state.
+let updateEditorLanguageTooltip (msg: Msg) (model: EditorLanguageTooltip) =
+  match msg with
+  | ShowTooltipChanged controlId ->
+    { model with ControlId = controlId }, Cmd.none
+  | EditorLanguageTooltipIsEnterDelayExpired isExpired ->
+    { model with IsEnterDelayExpired = isExpired }, Cmd.none
+  | EditorLanguageTooltipIsExitDelayExpired isExpired ->
+    { model with IsExitDelayExpired = isExpired }, Cmd.none
+  | _ -> failwith (sprintf "No case implemented to update EditorLanguageTooltip for message %A" msg)
 
 // The update function will receive the change required by Msg, and the current state. It will produce a new state and potentially new command(s).
 let update (msg: Msg) (model: Model) =
@@ -104,13 +142,21 @@ let update (msg: Msg) (model: Model) =
     model, Cmd.none
   | TabChanged selectedTabId ->
     { model with SelectedTabId = selectedTabId }, Cmd.none
+  | EditorLanguageChanged editorLanguage ->
+    { model with EditorLanguage = editorLanguage }, Cmd.none
+  | ShowTooltipChanged _
+  | EditorLanguageTooltipIsEnterDelayExpired _
+  | EditorLanguageTooltipIsExitDelayExpired _ ->
+    let (editorLanguageTooltipModel, editorLanguageTooltipCmd) = updateEditorLanguageTooltip msg model.ShowTooltip
+    { model with ShowTooltip = editorLanguageTooltipModel }, editorLanguageTooltipCmd
+
 
 // Styles documentation links
 // - https://github.com/cmeeren/Feliz.MaterialUI/blob/master/docs-app/public/pages/samples/sign-in/SignIn.fs
 // - https://cmeeren.github.io/Feliz.MaterialUI/#usage/styling
 // - https://material-ui.com/styles/basics/
 
-type CssClasses = { RootDiv: string; input: string }
+type CssClasses = { RootDiv: string }
 
 let useStyles = Styles.makeStyles(fun styles theme ->
   {
@@ -121,55 +167,11 @@ let useStyles = Styles.makeStyles(fun styles theme ->
       style.color "#fff"
       style.height (length.percent 100)
       style.fontFamily "system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, sans-serif"
-    ];
-    // see https://material-ui.com/components/selects/#customized-selects
-    input = styles.create [
-    // style.borderRadius 4
-    // style.position.relative
-    // style.backgroundColor theme.palette.background.paper //backgroundColor
-    // style.border (1, borderStyle.solid, "#ced4da")
-    // style.fontSize 16
-    // style.padding (10, 26, 10, 12)
-    // Interop.mkStyle "transition" (theme.transitions.create ([|"border-color"; "box-shadow"|]))
-      //style.transition (theme.transitions ([|"border-color", "box-shadow"|]))
-      // Use the system font instead of the default Roboto font.
-      // style.fontFamily: [
-      //   '-apple-system',
-      //   'BlinkMacSystemFont',
-      //   '"Segoe UI"',
-      //   'Roboto',
-      //   '"Helvetica Neue"',
-      //   'Arial',
-      //   'sans-serif',
-      //   '"Apple Color Emoji"',
-      //   '"Segoe UI Emoji"',
-      //   '"Segoe UI Symbol"',
-      // ].join(','),
-      //Interop.mkStyle "&$focus" "{ borderColor: '#ff0000'}"  
-   //style.custom ("&:focus", styles.create [style.borderRadius 4; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] ) //&$focus 
-      //``&:focus``= [
-        //style.borderRadius 4,
-        //style.borderColor = "#80bdff"//,
-        //style.boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-      //]
+      // Next line not needed but kept as an example for nested styles.
+      //style.custom ("&:focus", styles.create [style.borderRadius 4; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
     ]
   }
 )
-
-// see https://material-ui.com/components/selects/#customized-selects
-// let BootstrapInput () = Feliz.MaterialUI.Mui  withStyles(fun theme -> 
-//   {|
-//     input = styles.create [
-//       style.borderRadius 4
-//       style.position.relative
-//       style.backgroundColor theme.palette.background.paper
-//       style.border (1, borderStyle.solid, "#ced4da")
-//       style.fontSize 16
-//       style.padding (10, 26, 10, 12)
-//       Interop.mkStyle "transition" (theme.transitions.create ([|"border-color"; "box-shadow"|]))
-//     ]
-//   |}
-//   )//(Mui.inputBase)
 
 // Material UI extensions.
 type MuiEx =
@@ -180,11 +182,12 @@ type MuiEx =
       if onClick.IsSome
         then prop.onClick onClick.Value
     ]
-  static member inline withTooltip (title: string, element: ReactElement) =
+  static member inline withTooltip (title: string, showTooltip: bool, element: ReactElement) =
     Mui.tooltip [
       tooltip.title title
       tooltip.enterDelay 700
       tooltip.children(element)
+      tooltip.open' showTooltip
     ]
 
 let calcMainContainerIntendedWidth model =
@@ -194,7 +197,8 @@ let calcMainContainerIntendedWidth model =
   | x -> x
 
 // The MonacoEditor as a react component.
-let EditorComponent = React.functionComponent(fun (model, dispatch) ->
+[<ReactComponent>]
+let EditorComponent (model, dispatch) =
   let divEl = React.useElementRef()
   React.useEffectOnce(fun () ->
     let editor = 
@@ -212,7 +216,6 @@ let EditorComponent = React.functionComponent(fun (model, dispatch) ->
     prop.style [ style.display.block; style.width length.auto; style.height length.auto; style.minHeight 100; style.border (1, borderStyle.solid, "#858585") ]
     prop.ref divEl
   ]
-)
 
 let headerElement model dispatch =
   Html.div [
@@ -235,53 +238,79 @@ let headerElement model dispatch =
     ]
   ]
 
-let toolbarElement model dispatch classes =
+// Logic for tooltip delay state:
+// - Timer starts when mouse enters any tooltip control.
+// - Timer cancelled if mouse over same control for less than x ms. 
+// - Delay fulfilled/passed/expired if mouse over the same control for x ms.
+// - Delay reset when all tooltip controls have their tooltip closed.
+// -- Imlementation notes --
+// - Only two timers are needed at any time that are shared by all tooltips.
+// - Enter timer started on MouseEnter, cancelled on MouseLeave and sets tooltip delay state to fulfilled when expired.
+let mutable tooltipEnterDelayTimerHandle: float option = None
+let mutable tooltipExitDelayTimerHandle: float option = None
+
+let onMouseEnter (dispatch: Msg -> unit) =
+  EditorLanguageTooltipIsEnterDelayExpired false |> dispatch
+  tooltipEnterDelayTimerHandle <- Some (window.setTimeout((fun _ -> (EditorLanguageTooltipIsEnterDelayExpired true |> dispatch)), 1000))
+  if tooltipExitDelayTimerHandle.IsSome then 
+    window.clearTimeout(tooltipExitDelayTimerHandle.Value)
+    tooltipExitDelayTimerHandle <- None
+
+let onMouseLeave (dispatch: Msg -> unit) =
+  if tooltipEnterDelayTimerHandle.IsSome then
+    window.clearTimeout(tooltipEnterDelayTimerHandle.Value)
+    tooltipEnterDelayTimerHandle <- None
+  EditorLanguageTooltipIsExitDelayExpired false |> dispatch
+  tooltipExitDelayTimerHandle <- Some (window.setTimeout((fun _ -> (EditorLanguageTooltipIsExitDelayExpired true |> dispatch)), 300))
+
+let toolbarElement model dispatch (classes: CssClasses) =
   Html.div [
-    MuiEx.withTooltip (
-      "Wrap text",
-      Mui.iconButton [ 
-        prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginRight 5]
-        prop.onClick (fun _ -> dispatch ToggleWrapText)
-        iconButton.children (Icons.wrapTextIcon [ if model.EditorOptions.WrapText then icon.color.primary else () ]) 
-      ])
-    Mui.formControl [
-      formControl.size.small
-      formControl.variant.outlined
-      formControl.children [
-        Mui.inputLabel [
-          prop.id "language-select-label"
-          inputLabel.children [
-            Html.text "Language"
-          ]
-        ]
-        Mui.select [
-          prop.style [style.marginTop 14]
-          select.labelId "language-select-label"
-          select.value "javascript"
-          select.onChange (fun _ -> printfn "changed")
-          //select.label "Language" // Same as in inputLabel, needed for gap in surrounding border.
-          //input={<BootstrapInput />
-          select.input (
-            Mui.inputBase [
-              //prop.className classes.Input
-            ]
-          )
-          select.children [
-            Mui.menuItem [
-              prop.value "plaintext"
-              menuItem.children [
-                Html.text "Plain text"
+    prop.style [style.marginTop 14]
+    prop.children [
+      MuiEx.withTooltip (
+        "Wrap text",
+        model.ShowTooltip.ControlId = ControlId.WrapText && (model.ShowTooltip.IsEnterDelayExpired || not model.ShowTooltip.IsExitDelayExpired),
+        Mui.iconButton [ 
+          prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginRight 5]
+          prop.onClick (fun _ -> dispatch ToggleWrapText)
+          prop.onMouseEnter (fun _ -> onMouseEnter dispatch; (ShowTooltipChanged ControlId.WrapText) |> dispatch)
+          prop.onMouseLeave (fun _ -> onMouseLeave dispatch; (ShowTooltipChanged ControlId.None) |> dispatch)
+          iconButton.children (Icons.wrapTextIcon [ if model.EditorOptions.WrapText then icon.color.primary else () ]) 
+        ])
+      MuiEx.withTooltip (
+        "Language",
+        model.ShowTooltip.ControlId = ControlId.EditorLanguage && (model.ShowTooltip.IsEnterDelayExpired || not model.ShowTooltip.IsExitDelayExpired),
+        Mui.formControl [
+          formControl.size.small
+          formControl.variant.outlined
+          formControl.children [
+            Mui.select [
+              select.value model.EditorLanguage
+              select.onChange (EditorLanguageChanged >> dispatch)
+              select.onOpen (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+              prop.onMouseEnter (fun _ -> onMouseEnter dispatch; (ShowTooltipChanged ControlId.EditorLanguage) |> dispatch)
+              prop.onMouseLeave (fun _ -> onMouseLeave dispatch; (ShowTooltipChanged ControlId.None) |> dispatch)
+              select.input (
+                Mui.inputBase []
+              )
+              select.children [
+                Mui.menuItem [
+                  prop.value (unbox<string> PlainText)
+                  menuItem.children [
+                    Html.text PlainText.displayText
+                  ]
+                ]
+                Mui.menuItem [
+                  prop.value (unbox<string> JavaScript)
+                  menuItem.children [
+                    Html.text JavaScript.displayText
+                  ]
+                ]
               ]
             ]
-            Mui.menuItem [
-              prop.value "javascript"
-              menuItem.children [
-                Html.text "JavaScript"
-              ]
-            ]
           ]
         ]
-      ]
+      )
     ]
   ]
 
@@ -337,7 +366,8 @@ let contentBelowTabsElement =
     ]
   ]
 
-let rootDivComponent = React.functionComponent(fun (model, dispatch) ->
+[<ReactComponent>]
+let rootDivComponent (model, dispatch) =
   let classes = useStyles ()
   let mainContainerWidth = calcMainContainerIntendedWidth model
   Html.div [
@@ -359,10 +389,10 @@ let rootDivComponent = React.functionComponent(fun (model, dispatch) ->
       ]
     ]
   ]
-)
 
 // Website markup definition.
-let app = React.functionComponent(fun (model, dispatch) ->
+[<ReactComponent>]
+let app (model, dispatch) =
   React.useEffectOnce(fun () ->
     window.addEventListener("resize", fun _ -> WindowWidthChaned window.innerWidth |> dispatch)
   )
@@ -372,7 +402,6 @@ let app = React.functionComponent(fun (model, dispatch) ->
       rootDivComponent(model, dispatch)
     ]
   ]
-)
 
 let render (state: Model) (dispatch: Msg -> unit) =
   app (state, dispatch)
