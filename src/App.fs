@@ -110,16 +110,12 @@ let update (msg: Msg) (model: Model) =
 // - https://cmeeren.github.io/Feliz.MaterialUI/#usage/styling
 // - https://material-ui.com/styles/basics/
 
-type CssClasses = { RootDiv: string; Input: string }
+type CssClasses = { RootDiv: string; input: string }
 
 let useStyles = Styles.makeStyles(fun styles theme ->
-  Browser.Dom.console.log "in useStyles"
-  Browser.Dom.console.log theme.palette
-  // debugger ()
-  let backgroundColor = "#1e1e1e"
   {
     RootDiv = styles.create [
-      style.backgroundColor backgroundColor
+      style.backgroundColor theme.palette.background.paper
       style.padding 10
       style.fontSize 16
       style.color "#fff"
@@ -127,14 +123,14 @@ let useStyles = Styles.makeStyles(fun styles theme ->
       style.fontFamily "system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, sans-serif"
     ];
     // see https://material-ui.com/components/selects/#customized-selects
-    Input = styles.create [
-      style.borderRadius 4
-      style.position.relative
-      style.backgroundColor theme.palette.background.paper //backgroundColor
-      style.border (1, borderStyle.solid, "#ced4da")
-      style.fontSize 16
-      style.padding (10, 26, 10, 12)
-      Interop.mkStyle "transition" (theme.transitions.create ([|"border-color"; "box-shadow"|]))
+    input = styles.create [
+    // style.borderRadius 4
+    // style.position.relative
+    // style.backgroundColor theme.palette.background.paper //backgroundColor
+    // style.border (1, borderStyle.solid, "#ced4da")
+    // style.fontSize 16
+    // style.padding (10, 26, 10, 12)
+    // Interop.mkStyle "transition" (theme.transitions.create ([|"border-color"; "box-shadow"|]))
       //style.transition (theme.transitions ([|"border-color", "box-shadow"|]))
       // Use the system font instead of the default Roboto font.
       // style.fontFamily: [
@@ -149,11 +145,13 @@ let useStyles = Styles.makeStyles(fun styles theme ->
       //   '"Segoe UI Emoji"',
       //   '"Segoe UI Symbol"',
       // ].join(','),
-      // '&:focus': {
-      //   borderRadius: 4,
-      //   borderColor: '#80bdff',
-      //   boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-      // },
+      //Interop.mkStyle "&$focus" "{ borderColor: '#ff0000'}"  
+   //style.custom ("&:focus", styles.create [style.borderRadius 4; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] ) //&$focus 
+      //``&:focus``= [
+        //style.borderRadius 4,
+        //style.borderColor = "#80bdff"//,
+        //style.boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+      //]
     ]
   }
 )
@@ -238,11 +236,11 @@ let headerElement model dispatch =
   ]
 
 let toolbarElement model dispatch classes =
-  //let theme = Styles.useTheme(Themes.darkTheme)
   Html.div [
     MuiEx.withTooltip (
       "Wrap text",
       Mui.iconButton [ 
+        prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginRight 5]
         prop.onClick (fun _ -> dispatch ToggleWrapText)
         iconButton.children (Icons.wrapTextIcon [ if model.EditorOptions.WrapText then icon.color.primary else () ]) 
       ])
@@ -257,6 +255,7 @@ let toolbarElement model dispatch classes =
           ]
         ]
         Mui.select [
+          prop.style [style.marginTop 14]
           select.labelId "language-select-label"
           select.value "javascript"
           select.onChange (fun _ -> printfn "changed")
@@ -264,7 +263,7 @@ let toolbarElement model dispatch classes =
           //input={<BootstrapInput />
           select.input (
             Mui.inputBase [
-              prop.className classes.Input
+              //prop.className classes.Input
             ]
           )
           select.children [
@@ -291,7 +290,7 @@ let tabsWithContentElement model dispatch =
     tabContext.value (string model.SelectedTabId)
     tabContext.children [
       Mui.paper [
-        prop.style [style.flexGrow 1]
+        prop.style [style.flexGrow 1; style.marginTop 5]
         paper.children [
           Mui.tabs [
             tabs.value model.SelectedTabId
@@ -350,8 +349,6 @@ let rootDivComponent = React.functionComponent(fun (model, dispatch) ->
         prop.children [
           Html.div [
             prop.children [
-              Html.text model.WindowInnerWidth
-              Html.text (sprintf "paper: %s" Themes.darkTheme.palette.background.paper)
               headerElement model dispatch
               toolbarElement model dispatch classes
               tabsWithContentElement model dispatch

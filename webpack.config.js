@@ -29,13 +29,13 @@ var CONFIG = {
   // More info at https://babeljs.io/docs/en/next/babel-preset-env.html
   babel: {
     presets: [
-      ["@babel/preset-env", {
-        "targets": "> 0.25%, not dead",
-        // This adds polyfills when needed. Requires core-js dependency.
-        // See https://babeljs.io/docs/en/babel-preset-env#usebuiltins
-        "useBuiltIns": "usage",
-        "corejs": 3
-      }],
+      // ["@babel/preset-env", {
+      //   "targets": "> 0.25%, not dead",
+      //   // This adds polyfills when needed. Requires core-js dependency.
+      //   // See https://babeljs.io/docs/en/babel-preset-env#usebuiltins
+      //   "useBuiltIns": "usage",
+      //   "corejs": 3
+      // }],
       ["@babel/preset-react"],
       ["@babel/preset-typescript"]
     ],
@@ -82,8 +82,9 @@ module.exports = {
     filename: isProduction ? '[name].[hash].js' : '[name].js'
   },
   mode: isProduction ? "production" : "development",
-  devtool: isProduction ? "source-map" : "eval-source-map",
+  devtool: isProduction ? "source-map" : "source-map", //"eval-source-map",
   optimization: {
+    concatenateModules: false,
     // Split the code coming from npm packages into a different file.
     // 3rd party dependencies change less often, let the browser cache them.
     splitChunks: {

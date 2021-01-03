@@ -30,4 +30,17 @@ let darkTheme = Styles.createMuiTheme([
   theme.props.muiAppBar [
     appBar.color.default'
   ]
+  theme.overrides.muiInputBase.input [
+    style.borderRadius 4
+    style.position.relative
+    style.backgroundColor "#1e1e1e" //theme.palette.background.paper //backgroundColor
+    style.border (1, borderStyle.solid, "#ced4da")
+    style.fontSize 16
+    style.padding (8, 24, 8, 10)
+    Interop.mkStyle "transition" (defaultTheme.transitions.create ([|"border-color"; "box-shadow"|]))
+    style.custom ("&:focus", [style.borderRadius 4; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] ) //&$focus 
+  ]
+  theme.overrides.muiInputBase.inputMarginDense [
+    style.paddingTop length.auto
+  ]
 ])
