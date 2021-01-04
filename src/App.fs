@@ -113,9 +113,15 @@ let update (msg: Msg) (model: Model) =
   | FilesAdded files ->
     if not files.IsEmpty then
       printfn "files added %A" (files.[0].name)
+      let lang = 
+        if files.[0].name.EndsWith(".js") then JavaScript
+        elif files.[0].name.EndsWith(".ts") then TypeScript
+        else PlainText
       let contentPromise = FileTools.readAsText (0, files.[0])
       Promise.iter (fun text -> Option.iter (Editor.setValue(text)) monacoEditor) contentPromise
-    model, Cmd.none
+      model, (Cmd.ofMsg (EditorLanguageChanged lang))
+    else
+      model, Cmd.none
   | WindowWidthChaned newWidth ->
     let (debouncerModel, debouncerCmd) =
       model.Debouncer
@@ -334,7 +340,7 @@ let contentBelowTabsElement =
   ]
 
 [<ReactComponent>]
-let rootDivComponent (model, dispatch) =
+let RootDivComponent (model, dispatch) =
   let classes = useStyles ()
   Html.div [
     prop.className classes.RootDiv
@@ -359,16 +365,16 @@ let rootDivComponent (model, dispatch) =
 
 // Website markup definition.
 [<ReactComponent>]
-let app (model, dispatch) =
+let App (model, dispatch) =
   React.useEffectOnce(fun () ->
     window.addEventListener("resize", fun _ -> WindowWidthChaned window.innerWidth |> dispatch)
   )
   Mui.themeProvider [
     themeProvider.theme Themes.darkTheme
     themeProvider.children [
-      rootDivComponent(model, dispatch)
+      RootDivComponent(model, dispatch)
     ]
   ]
 
 let render (state: Model) (dispatch: Msg -> unit) =
-  app (state, dispatch)
+  App (state, dispatch)
