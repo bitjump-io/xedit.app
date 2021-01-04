@@ -23,12 +23,16 @@ type Height = | Height of int
 
 [<StringEnum>]
 type EditorLanguage =
-  | PlainText
-  | JavaScript
+  | [<CompiledName("plaintext")>] PlainText
+  | [<CompiledName("javascript")>] JavaScript
+  | [<CompiledName("typescript")>] TypeScript
   member x.displayText =
     match x with
     | PlainText -> "Plain text"
     | JavaScript -> "JavaScript"
+    | TypeScript -> "TypeScript"
+  
+  static member all = [PlainText; JavaScript; TypeScript]
 
 type EditorOptions = { WrapText: bool }
 
@@ -38,23 +42,23 @@ type ControlId =
   | WrapText
   | EditorLanguage
 
-type EditorLanguageTooltip = { ControlId: ControlId }
+// Not included in model because quite large.
+let mutable monacoEditor: IMonacoEditor option = None
 
 // Model holds the current state.
 type Model = 
   { SelectedTabId: int
-    Editor: IMonacoEditor option
     EditorHeight: int
     EditorOptions: EditorOptions
     EditorLanguage: EditorLanguage
-    ShowTooltip: EditorLanguageTooltip
+    ShowTooltipControlId: ControlId
     WindowInnerWidth: float
     DevicePixelRatio: float
     Debouncer: Debouncer.State }
 
 // Msg is an action that we need to apply to the current state.
 type Msg =
-  | EditorCreated of IMonacoEditor * Height
+  | EditorCreated of Height
   | ToggleWrapText
   | OpenFilePicker
   | FilesAdded of File list
@@ -67,11 +71,10 @@ type Msg =
 
 // The init function will produce an initial state once the program starts running.  It can take any arguments.
 let init () =
-  { Editor = None
-    EditorHeight = 0
+  { EditorHeight = 0
     EditorOptions = { WrapText = false }
     EditorLanguage = PlainText
-    ShowTooltip = { ControlId = ControlId.None }
+    ShowTooltipControlId = ControlId.None
     WindowInnerWidth = window.innerWidth
     DevicePixelRatio = window.devicePixelRatio
     Debouncer = Debouncer.create()
@@ -81,10 +84,9 @@ let init () =
 
 let getElementById id =
   let el = document.getElementById(id)
-  if isNull el then
-    eprintfn "Element with id '%s' is null" id
+  if isNull el then 
     None
-  else
+  else 
     Some el
 
 let click (el: HTMLElement) =
@@ -96,19 +98,12 @@ let updateEditorOptions (msg: Msg) (model: EditorOptions) =
   | ToggleWrapText -> { model with WrapText = not model.WrapText }, Cmd.none
   | _ -> failwith (sprintf "No case implemented to update EditorOptions for message %A" msg)
 
-  // Helper to update nested state.
-let updateEditorLanguageTooltip (msg: Msg) (model: EditorLanguageTooltip) =
-  match msg with
-  | ShowTooltipChanged controlId ->
-    { model with ControlId = controlId }, Cmd.none
-  | _ -> failwith (sprintf "No case implemented to update EditorLanguageTooltip for message %A" msg)
-
 // The update function will receive the change required by Msg, and the current state. It will produce a new state and potentially new command(s).
 let update (msg: Msg) (model: Model) =
   match msg with
-  | EditorCreated (editorInst, Height height) -> { model with Editor = Some editorInst; EditorHeight = height }, Cmd.none
+  | EditorCreated (Height height) -> { model with EditorHeight = height }, Cmd.none
   | ToggleWrapText ->
-    Option.iter (Editor.setWordWrap(not model.EditorOptions.WrapText)) model.Editor
+    Option.iter (Editor.setWordWrap(not model.EditorOptions.WrapText)) monacoEditor
     let (editorOptionsModel, editorOptionsCmd) = updateEditorOptions msg model.EditorOptions
     { model with EditorOptions = editorOptionsModel }, editorOptionsCmd
   | OpenFilePicker ->
@@ -119,7 +114,7 @@ let update (msg: Msg) (model: Model) =
     if not files.IsEmpty then
       printfn "files added %A" (files.[0].name)
       let contentPromise = FileTools.readAsText (0, files.[0])
-      Promise.iter (fun text -> Option.iter (Editor.setValue(text)) model.Editor) contentPromise
+      Promise.iter (fun text -> Option.iter (Editor.setValue(text)) monacoEditor) contentPromise
     model, Cmd.none
   | WindowWidthChaned newWidth ->
     let (debouncerModel, debouncerCmd) =
@@ -130,18 +125,20 @@ let update (msg: Msg) (model: Model) =
     let (debouncerModel, debouncerCmd) = Debouncer.update debouncerMsg model.Debouncer
     { model with Debouncer = debouncerModel }, debouncerCmd
   | EndOfWindowWidthChaned ->
-    let mainContainerWidth = if getElementById(MainContainerElementId).IsSome then int (getElementById(MainContainerElementId).Value.clientWidth) else 100 // todo
     let widthAdjustment = -2 // Needed so main-content and editor get the same computed width.
-    Option.iter (Editor.layout({ width = mainContainerWidth + widthAdjustment; height = model.EditorHeight })) model.Editor
+    match getElementById(MainContainerElementId) with
+    | Some mainContainerElement -> 
+      let mainContainerWidth = int mainContainerElement.clientWidth
+      Option.iter (Editor.layout({ width = mainContainerWidth + widthAdjustment; height = model.EditorHeight })) monacoEditor
+    | None -> ()
     model, Cmd.none
   | TabChanged selectedTabId ->
     { model with SelectedTabId = selectedTabId }, Cmd.none
   | EditorLanguageChanged editorLanguage ->
+    Option.iter (Editor.setLanguage(unbox<string> editorLanguage)) monacoEditor 
     { model with EditorLanguage = editorLanguage }, Cmd.none
-  | ShowTooltipChanged _ ->
-    let (editorLanguageTooltipModel, editorLanguageTooltipCmd) = updateEditorLanguageTooltip msg model.ShowTooltip
-    { model with ShowTooltip = editorLanguageTooltipModel }, editorLanguageTooltipCmd
-
+  | ShowTooltipChanged controlId ->
+    { model with ShowTooltipControlId = controlId }, Cmd.none
 
 // Styles documentation links
 // - https://github.com/cmeeren/Feliz.MaterialUI/blob/master/docs-app/public/pages/samples/sign-in/SignIn.fs
@@ -182,12 +179,11 @@ type MuiEx =
       tooltip.children(element)
       tooltip.open' showTooltip
     ]
-
-let calcMainContainerIntendedWidth model =
-  match int model.WindowInnerWidth with
-  | x when x < 1100 -> x
-  | x when x >= 1100 -> 1100
-  | x -> x
+  static member inline redText (value: string) =
+    Html.span [
+      prop.style [style.color.red]
+      prop.children [Html.text value]
+    ]
 
 // The MonacoEditor as a react component.
 [<ReactComponent>]
@@ -199,14 +195,14 @@ let EditorComponent (model, dispatch) =
       | Some x -> 
         let width = int x.clientWidth
         let height = 600
-        let editor = Editor.create(x, { width = width; height = height })
-        EditorCreated (editor, Height height) |> dispatch
-        Some editor
+        monacoEditor <- Some(Editor.create(x, { width = width; height = height }))
+        EditorCreated (Height height) |> dispatch
+        monacoEditor
       | None -> None
     React.createDisposable(fun () -> if editor.IsSome then Editor.dispose(editor.Value))
   )
   Html.div [
-    prop.style [ style.display.block; style.width length.auto; style.height length.auto; style.minHeight 100; style.border (1, borderStyle.solid, "#858585") ]
+    prop.style [style.display.block; style.width length.auto; style.height length.auto; style.minHeight 100; style.border (1, borderStyle.solid, "#858585")]
     prop.ref divEl
   ]
 
@@ -219,14 +215,22 @@ let headerElement model dispatch =
       prop.style [style.display.none]
       prop.onChange (FilesAdded >> dispatch)
     ]
-    Html.div [
-      prop.style [style.fontSize 24; style.marginBottom 10]
-      prop.children [
+    Mui.typography [
+      typography.variant.h2
+      typography.children [
+        Html.text "xedit.app - Client side "
+        MuiEx.redText "x"
+        Html.text "tra large file "
+        MuiEx.redText "edit"
+        Html.text "or app"
+      ]
+    ]
+    Mui.typography [
+      typography.variant.body1
+      prop.style [style.marginBottom 10; style.marginTop 10]
+      typography.children [
         Html.text "Drag & drop anywhere to open files or use the "
         MuiEx.buttonOutlined ("file picker", fun _ -> dispatch OpenFilePicker)
-        let mainContainerElem = getElementById MainContainerElementId
-        let mainContainerWidth = if mainContainerElem.IsSome then int (mainContainerElem.Value.clientWidth) else 0
-        Html.text (sprintf "Window width: %i, editor height: %i, main container width: %i, " (int model.WindowInnerWidth) model.EditorHeight mainContainerWidth)
       ]
     ]
   ]
@@ -237,7 +241,7 @@ let toolbarElement model dispatch (classes: CssClasses) =
     prop.children [
       MuiEx.withTooltip (
         "Wrap text",
-        model.ShowTooltip.ControlId = ControlId.WrapText,
+        model.ShowTooltipControlId = ControlId.WrapText,
         Mui.iconButton [ 
           prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginRight 5]
           prop.onClick (fun _ -> dispatch ToggleWrapText)
@@ -247,7 +251,7 @@ let toolbarElement model dispatch (classes: CssClasses) =
         ])
       MuiEx.withTooltip (
         "Language",
-        model.ShowTooltip.ControlId = ControlId.EditorLanguage,
+        model.ShowTooltipControlId = ControlId.EditorLanguage,
         Mui.formControl [
           formControl.size.small
           formControl.variant.outlined
@@ -262,18 +266,13 @@ let toolbarElement model dispatch (classes: CssClasses) =
                 Mui.inputBase []
               )
               select.children [
-                Mui.menuItem [
-                  prop.value (unbox<string> PlainText)
-                  menuItem.children [
-                    Html.text PlainText.displayText
+                for el in EditorLanguage.all -> 
+                  Mui.menuItem [
+                    prop.value (unbox<string> el)
+                    menuItem.children [
+                      Html.text el.displayText
+                    ]
                   ]
-                ]
-                Mui.menuItem [
-                  prop.value (unbox<string> JavaScript)
-                  menuItem.children [
-                    Html.text JavaScript.displayText
-                  ]
-                ]
               ]
             ]
           ]
@@ -337,13 +336,13 @@ let contentBelowTabsElement =
 [<ReactComponent>]
 let rootDivComponent (model, dispatch) =
   let classes = useStyles ()
-  let mainContainerWidth = calcMainContainerIntendedWidth model
   Html.div [
     prop.className classes.RootDiv
     prop.children [
-      Html.main [
+      Mui.container [
         prop.id MainContainerElementId
-        prop.style [style.position.relative; style.marginLeft length.auto; style.marginRight length.auto; style.width (length.percent 100); style.maxWidth mainContainerWidth]
+        container.component' "main"
+        container.disableGutters true
         prop.children [
           Html.div [
             prop.children [

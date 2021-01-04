@@ -63,8 +63,8 @@ class MonacoEditor implements IMonacoEditor {
         top: 5,
         bottom: 5
       },
-      value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-      language: "javascript"
+      value: "",
+      language: null
     });
   }
 
@@ -92,6 +92,7 @@ class MonacoEditor implements IMonacoEditor {
   }
 
   setLanguage(languageId: string): void {
+    languageId = languageId === "plaintext" ? null : languageId;
     let model = this.editor.getModel();
     if (model) {
       monaco.editor.setModelLanguage(model, languageId);

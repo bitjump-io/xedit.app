@@ -82,7 +82,7 @@ module.exports = {
     filename: isProduction ? '[name].[hash].js' : '[name].js'
   },
   mode: isProduction ? "production" : "development",
-  devtool: isProduction ? "source-map" : "source-map", //"eval-source-map",
+  devtool: isProduction ? "source-map" : "cheap-source-map", //"eval-source-map",
   optimization: {
     concatenateModules: false,
     // Split the code coming from npm packages into a different file.
