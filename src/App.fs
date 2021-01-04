@@ -38,7 +38,7 @@ type ControlId =
   | WrapText
   | EditorLanguage
 
-type EditorLanguageTooltip = { ControlId: ControlId; IsEnterDelayExpired: bool; IsExitDelayExpired: bool }
+type EditorLanguageTooltip = { ControlId: ControlId }
 
 // Model holds the current state.
 type Model = 
@@ -64,8 +64,6 @@ type Msg =
   | TabChanged of int
   | EditorLanguageChanged of EditorLanguage
   | ShowTooltipChanged of ControlId
-  | EditorLanguageTooltipIsEnterDelayExpired of bool
-  | EditorLanguageTooltipIsExitDelayExpired of bool
 
 // The init function will produce an initial state once the program starts running.  It can take any arguments.
 let init () =
@@ -73,7 +71,7 @@ let init () =
     EditorHeight = 0
     EditorOptions = { WrapText = false }
     EditorLanguage = PlainText
-    ShowTooltip = { ControlId = ControlId.None; IsEnterDelayExpired = false; IsExitDelayExpired = true }
+    ShowTooltip = { ControlId = ControlId.None }
     WindowInnerWidth = window.innerWidth
     DevicePixelRatio = window.devicePixelRatio
     Debouncer = Debouncer.create()
@@ -103,10 +101,6 @@ let updateEditorLanguageTooltip (msg: Msg) (model: EditorLanguageTooltip) =
   match msg with
   | ShowTooltipChanged controlId ->
     { model with ControlId = controlId }, Cmd.none
-  | EditorLanguageTooltipIsEnterDelayExpired isExpired ->
-    { model with IsEnterDelayExpired = isExpired }, Cmd.none
-  | EditorLanguageTooltipIsExitDelayExpired isExpired ->
-    { model with IsExitDelayExpired = isExpired }, Cmd.none
   | _ -> failwith (sprintf "No case implemented to update EditorLanguageTooltip for message %A" msg)
 
 // The update function will receive the change required by Msg, and the current state. It will produce a new state and potentially new command(s).
@@ -144,9 +138,7 @@ let update (msg: Msg) (model: Model) =
     { model with SelectedTabId = selectedTabId }, Cmd.none
   | EditorLanguageChanged editorLanguage ->
     { model with EditorLanguage = editorLanguage }, Cmd.none
-  | ShowTooltipChanged _
-  | EditorLanguageTooltipIsEnterDelayExpired _
-  | EditorLanguageTooltipIsExitDelayExpired _ ->
+  | ShowTooltipChanged _ ->
     let (editorLanguageTooltipModel, editorLanguageTooltipCmd) = updateEditorLanguageTooltip msg model.ShowTooltip
     { model with ShowTooltip = editorLanguageTooltipModel }, editorLanguageTooltipCmd
 
@@ -185,7 +177,8 @@ type MuiEx =
   static member inline withTooltip (title: string, showTooltip: bool, element: ReactElement) =
     Mui.tooltip [
       tooltip.title title
-      tooltip.enterDelay 700
+      tooltip.arrow true
+      tooltip.placement.bottom
       tooltip.children(element)
       tooltip.open' showTooltip
     ]
@@ -238,48 +231,23 @@ let headerElement model dispatch =
     ]
   ]
 
-// Logic for tooltip delay state:
-// - Timer starts when mouse enters any tooltip control.
-// - Timer cancelled if mouse over same control for less than x ms. 
-// - Delay fulfilled/passed/expired if mouse over the same control for x ms.
-// - Delay reset when all tooltip controls have their tooltip closed.
-// -- Imlementation notes --
-// - Only two timers are needed at any time that are shared by all tooltips.
-// - Enter timer started on MouseEnter, cancelled on MouseLeave and sets tooltip delay state to fulfilled when expired.
-let mutable tooltipEnterDelayTimerHandle: float option = None
-let mutable tooltipExitDelayTimerHandle: float option = None
-
-let onMouseEnter (dispatch: Msg -> unit) =
-  EditorLanguageTooltipIsEnterDelayExpired false |> dispatch
-  tooltipEnterDelayTimerHandle <- Some (window.setTimeout((fun _ -> (EditorLanguageTooltipIsEnterDelayExpired true |> dispatch)), 1000))
-  if tooltipExitDelayTimerHandle.IsSome then 
-    window.clearTimeout(tooltipExitDelayTimerHandle.Value)
-    tooltipExitDelayTimerHandle <- None
-
-let onMouseLeave (dispatch: Msg -> unit) =
-  if tooltipEnterDelayTimerHandle.IsSome then
-    window.clearTimeout(tooltipEnterDelayTimerHandle.Value)
-    tooltipEnterDelayTimerHandle <- None
-  EditorLanguageTooltipIsExitDelayExpired false |> dispatch
-  tooltipExitDelayTimerHandle <- Some (window.setTimeout((fun _ -> (EditorLanguageTooltipIsExitDelayExpired true |> dispatch)), 300))
-
 let toolbarElement model dispatch (classes: CssClasses) =
   Html.div [
     prop.style [style.marginTop 14]
     prop.children [
       MuiEx.withTooltip (
         "Wrap text",
-        model.ShowTooltip.ControlId = ControlId.WrapText && (model.ShowTooltip.IsEnterDelayExpired || not model.ShowTooltip.IsExitDelayExpired),
+        model.ShowTooltip.ControlId = ControlId.WrapText,
         Mui.iconButton [ 
           prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginRight 5]
           prop.onClick (fun _ -> dispatch ToggleWrapText)
-          prop.onMouseEnter (fun _ -> onMouseEnter dispatch; (ShowTooltipChanged ControlId.WrapText) |> dispatch)
-          prop.onMouseLeave (fun _ -> onMouseLeave dispatch; (ShowTooltipChanged ControlId.None) |> dispatch)
+          prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.WrapText) |> dispatch)
+          prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
           iconButton.children (Icons.wrapTextIcon [ if model.EditorOptions.WrapText then icon.color.primary else () ]) 
         ])
       MuiEx.withTooltip (
         "Language",
-        model.ShowTooltip.ControlId = ControlId.EditorLanguage && (model.ShowTooltip.IsEnterDelayExpired || not model.ShowTooltip.IsExitDelayExpired),
+        model.ShowTooltip.ControlId = ControlId.EditorLanguage,
         Mui.formControl [
           formControl.size.small
           formControl.variant.outlined
@@ -288,8 +256,8 @@ let toolbarElement model dispatch (classes: CssClasses) =
               select.value model.EditorLanguage
               select.onChange (EditorLanguageChanged >> dispatch)
               select.onOpen (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
-              prop.onMouseEnter (fun _ -> onMouseEnter dispatch; (ShowTooltipChanged ControlId.EditorLanguage) |> dispatch)
-              prop.onMouseLeave (fun _ -> onMouseLeave dispatch; (ShowTooltipChanged ControlId.None) |> dispatch)
+              prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.EditorLanguage) |> dispatch)
+              prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
               select.input (
                 Mui.inputBase []
               )
