@@ -6,13 +6,15 @@
 
 // Dependencies. Also required: core-js, fable-loader, fable-compiler, @babel/core,
 // @babel/preset-env, babel-loader, sass, sass-loader, css-loader, style-loader, file-loader
-var path = require("path");
-var webpack = require("webpack");
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var CopyWebpackPlugin = require('copy-webpack-plugin');
-var MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require("path");
+const fs = require('fs');
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
-var CONFIG = {
+const CONFIG = {
   // The tags to include the generated JS and CSS will be automatically injected in the HTML template
   // See https://github.com/jantimon/html-webpack-plugin
   indexHtmlTemplate: "./src/index.html",
@@ -43,36 +45,32 @@ var CONFIG = {
 }
 
 // If we're running the webpack-dev-server, assume we're in development mode
-var isProduction = !process.argv.find(v => v.indexOf('webpack-dev-server') !== -1);
+const isProduction = !process.argv.find(v => v.indexOf('webpack-dev-server') !== -1);
 console.log("Bundling for " + (isProduction ? "production" : "development") + "...");
+
+if (isProduction) {
+  fs.rmdirSync(resolve(CONFIG.outputDir), { recursive: true });
+}
 
 // The HtmlWebpackPlugin allows us to use a template for the index.html page
 // and automatically injects <script> or <link> tags for generated bundles.
-var commonPlugins = [
+const commonPlugins = [
   new HtmlWebpackPlugin({
     filename: 'index.html',
     template: resolve(CONFIG.indexHtmlTemplate)
   })
 ];
 
-let monacoEditorFiles = {
-  'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
-  'json.worker': 'monaco-editor/esm/vs/language/json/json.worker',
-  'css.worker': 'monaco-editor/esm/vs/language/css/css.worker',
-  'html.worker': 'monaco-editor/esm/vs/language/html/html.worker',
-  'ts.worker': 'monaco-editor/esm/vs/language/typescript/ts.worker'
-};
-
 module.exports = {
   // In development, bundle styles together with the code so they can also
   // trigger hot reloads. In production, put them in a separate CSS file.
   entry: isProduction ? {
       app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.tsEntry), resolve(CONFIG.cssEntry)],
-      ...monacoEditorFiles
+      //...monacoEditorFiles
     } : {
       app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.tsEntry)],
       style: [resolve(CONFIG.cssEntry)],
-      ...monacoEditorFiles
+      //...monacoEditorFiles
     },
   // Add a hash to the output file name in production
   // to prevent browser caching if code changes
@@ -84,19 +82,30 @@ module.exports = {
   mode: isProduction ? "production" : "development",
   devtool: isProduction ? "source-map" : "cheap-source-map", //"eval-source-map",
   optimization: {
-    concatenateModules: false,
-    // Split the code coming from npm packages into a different file.
-    // 3rd party dependencies change less often, let the browser cache them.
+    runtimeChunk: 'single',
     splitChunks: {
+      chunks: 'all',
+      maxInitialRequests: Infinity,
+      minSize: 0,
       cacheGroups: {
-        commons: {
-          test: /node_modules/,
-          name: "vendors",
-          chunks: "all"
-        }
-      }
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module) {
+            let packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+            packageName = packageName.replace('@', '');
+
+            // Output large libraries in separate files.
+            if (["monaco-editor", "material-ui", "react-do"].includes(packageName)) {
+              return `vendor.${packageName}`;
+            }
+            // All other node_modules in one file.
+            return "vendor";
+          },
+        },
+      },
     },
   },
+
   // Besides the HtmlPlugin, we use the following plugins:
   // PRODUCTION
   //    - MiniCssExtractPlugin: Extracts CSS from bundle to a different file
@@ -108,6 +117,9 @@ module.exports = {
     commonPlugins.concat([
       new MiniCssExtractPlugin({ filename: 'style.css' }),
       new CopyWebpackPlugin([{ from: resolve(CONFIG.assetsDir) }]),
+      new MonacoWebpackPlugin({
+        filename: isProduction ? '[name].worker.[hash].js' : '[name].js',
+      })
     ])
     : commonPlugins.concat([
       new webpack.HotModuleReplacementPlugin(),
