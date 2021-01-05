@@ -66,11 +66,9 @@ module.exports = {
   // trigger hot reloads. In production, put them in a separate CSS file.
   entry: isProduction ? {
       app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.tsEntry), resolve(CONFIG.cssEntry)],
-      //...monacoEditorFiles
     } : {
       app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.tsEntry)],
       style: [resolve(CONFIG.cssEntry)],
-      //...monacoEditorFiles
     },
   // Add a hash to the output file name in production
   // to prevent browser caching if code changes
@@ -118,11 +116,14 @@ module.exports = {
       new MiniCssExtractPlugin({ filename: 'style.css' }),
       new CopyWebpackPlugin([{ from: resolve(CONFIG.assetsDir) }]),
       new MonacoWebpackPlugin({
-        filename: isProduction ? '[name].worker.[hash].js' : '[name].js',
+        filename: '[name].worker.[hash].js',
       })
     ])
     : commonPlugins.concat([
       new webpack.HotModuleReplacementPlugin(),
+      new MonacoWebpackPlugin({
+        filename: '[name].worker.js',
+      })
     ]),
   resolve: {
     // See https://github.com/fable-compiler/Fable/issues/1490
@@ -156,7 +157,7 @@ module.exports = {
         use: [{
             loader: require.resolve('babel-loader'),
             options: CONFIG.babel
-            }]
+        }]
       },
       {
         test: /\.(sass|scss|css)$/,
