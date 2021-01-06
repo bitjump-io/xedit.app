@@ -1,5 +1,6 @@
 {
     "private": true,
+    "author": "David Neuy",
     "scripts": {
         "prestart": "dotnet tool restore",
         "start": "dotnet fable watch ./src --run webpack-dev-server",

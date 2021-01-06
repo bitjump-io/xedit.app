@@ -1,0 +1,13 @@
+name = "workers-site"
+account_id = ""
+type = "webpack"
+workers_dev = true
+
+[site]
+bucket = "./deploy"
+entry-point = "workers-site"
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+zone_id = ""
+route = "*xedit.app/*"
