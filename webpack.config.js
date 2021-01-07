@@ -20,7 +20,6 @@ const CONFIG = {
   indexHtmlTemplate: "./src/index.html",
   fsharpEntry: "./src/Main.fs.js",
   tsEntry: "./src/main.ts",
-  cssEntry: "./styles/main.scss",
   outputDir: "./deploy",
   assetsDir: "./public",
   devServerPort: 8080,
@@ -49,7 +48,7 @@ const isProduction = !process.argv.find(v => v.indexOf('webpack-dev-server') !==
 console.log("Bundling for " + (isProduction ? "production" : "development") + "...");
 
 if (isProduction) {
-  fs.rmdirSync(resolve(CONFIG.outputDir), { recursive: true });
+  fs.rmSync(resolve(CONFIG.outputDir), { recursive: true, force: true });
 }
 
 // The HtmlWebpackPlugin allows us to use a template for the index.html page
@@ -62,13 +61,8 @@ const commonPlugins = [
 ];
 
 module.exports = {
-  // In development, bundle styles together with the code so they can also
-  // trigger hot reloads. In production, put them in a separate CSS file.
-  entry: isProduction ? {
-      app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.tsEntry), resolve(CONFIG.cssEntry)],
-    } : {
+  entry: {
       app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.tsEntry)],
-      style: [resolve(CONFIG.cssEntry)],
     },
   // Add a hash to the output file name in production
   // to prevent browser caching if code changes
