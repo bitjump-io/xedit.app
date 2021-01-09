@@ -5,10 +5,12 @@ open Elmish
 open Feliz.MaterialUI
 open Browser
 open Browser.Types
+open Browser.Dom
 open Thoth.Elmish
 open System
 open MonacoEditor
 open Fable.Core
+open DomEx
 
 [<Literal>]
 let FileInputElementId = "file-input"
@@ -35,6 +37,12 @@ type EditorLanguage =
   static member all = [PlainText; JavaScript; TypeScript]
 
 type EditorOptions = { WrapText: bool }
+  with static member initial = { WrapText = false }
+
+type DragModel = { DragenterCount: int; DragleaveCount: int }
+  with 
+    static member initial = { DragenterCount = 0; DragleaveCount = 0 }
+    member x.isDragging = x.DragenterCount > x.DragleaveCount
 
 [<RequireQualifiedAccess>]
 type ControlId =
@@ -54,7 +62,8 @@ type Model =
     ShowTooltipControlId: ControlId
     WindowInnerWidth: float
     DevicePixelRatio: float
-    Debouncer: Debouncer.State }
+    Debouncer: Debouncer.State
+    DragModel: DragModel }
 
 // Msg is an action that we need to apply to the current state.
 type Msg =
@@ -68,17 +77,21 @@ type Msg =
   | TabChanged of int
   | EditorLanguageChanged of EditorLanguage
   | ShowTooltipChanged of ControlId
+  | OnDragenter
+  | OnDragleave
+  | OnDrop of File list
 
 // The init function will produce an initial state once the program starts running.  It can take any arguments.
 let init () =
-  { EditorHeight = 0
-    EditorOptions = { WrapText = false }
+  { SelectedTabId = 0
+    EditorHeight = 0
+    EditorOptions = EditorOptions.initial
     EditorLanguage = PlainText
     ShowTooltipControlId = ControlId.None
     WindowInnerWidth = window.innerWidth
     DevicePixelRatio = window.devicePixelRatio
     Debouncer = Debouncer.create()
-    SelectedTabId = 0
+    DragModel = DragModel.initial
   }, 
   Cmd.none
 
@@ -98,6 +111,14 @@ let updateEditorOptions (msg: Msg) (model: EditorOptions) =
   | ToggleWrapText -> { model with WrapText = not model.WrapText }, Cmd.none
   | _ -> failwith (sprintf "No case implemented to update EditorOptions for message %A" msg)
 
+// Helpers to update nested state.
+let updateDragModel (msg: Msg) (model: DragModel) =
+  match msg with
+  | OnDrop _ -> DragModel.initial, Cmd.none
+  | OnDragenter _ -> { model with DragenterCount = model.DragenterCount + 1 }, Cmd.none
+  | OnDragleave _ -> { model with DragleaveCount = model.DragleaveCount + 1 }, Cmd.none
+  | _ -> failwith (sprintf "No case implemented to update EditorOptions for message %A" msg)
+
 // The update function will receive the change required by Msg, and the current state. It will produce a new state and potentially new command(s).
 let update (msg: Msg) (model: Model) =
   match msg with
@@ -110,7 +131,10 @@ let update (msg: Msg) (model: Model) =
     // The default html file picker is not nice so it is displayed invisible and the click event is triggered here.
     Option.iter click (getElementById(FileInputElementId))
     model, Cmd.none
-  | FilesAdded files ->
+  | FilesAdded files
+  | OnDrop files ->
+    let (dragModel, dragCmd) = updateDragModel msg model.DragModel
+    let model = { model with DragModel = dragModel }
     if not files.IsEmpty then
       printfn "files added %A" (files.[0].name)
       let lang = 
@@ -119,9 +143,9 @@ let update (msg: Msg) (model: Model) =
         else PlainText
       let contentPromise = FileTools.readAsText (0, files.[0])
       Promise.iter (fun text -> Option.iter (Editor.setValue(text)) monacoEditor) contentPromise
-      model, (Cmd.ofMsg (EditorLanguageChanged lang))
+      model, Cmd.batch [dragCmd; (Cmd.ofMsg (EditorLanguageChanged lang))]
     else
-      model, Cmd.none
+      model, dragCmd
   | WindowWidthChaned newWidth ->
     let (debouncerModel, debouncerCmd) =
       model.Debouncer
@@ -145,6 +169,10 @@ let update (msg: Msg) (model: Model) =
     { model with EditorLanguage = editorLanguage }, Cmd.none
   | ShowTooltipChanged controlId ->
     { model with ShowTooltipControlId = controlId }, Cmd.none
+  | OnDragenter
+  | OnDragleave ->
+    let (dragModel, dragCmd) = updateDragModel msg model.DragModel
+    { model with DragModel = dragModel }, dragCmd
 
 // Styles documentation links
 // - https://github.com/cmeeren/Feliz.MaterialUI/blob/master/docs-app/public/pages/samples/sign-in/SignIn.fs
@@ -185,6 +213,8 @@ type MuiEx =
       tooltip.children(element)
       tooltip.open' showTooltip
     ]
+
+type HtmlEx =
   static member inline redText (value: string) =
     Html.span [
       prop.style [style.color.red]
@@ -225,9 +255,9 @@ let headerElement model dispatch =
       typography.variant.h2
       typography.children [
         Html.text "xedit.app - Client side "
-        MuiEx.redText "x"
+        HtmlEx.redText "x"
         Html.text "tra large file "
-        MuiEx.redText "edit"
+        HtmlEx.redText "edit"
         Html.text "or app"
       ]
     ]
@@ -332,9 +362,14 @@ let contentBelowTabsElement =
     prop.children [
       Html.text "Tipps"
       Html.ul [
-        Html.li "To see the context menu, right-click with the mouse."
-        Html.li "Select columns (column mode) by holding down Shift + Alt, then click and drag with the mouse."
-        Html.li "Use multiple cursors by holding down Alt, then click with the mouse."
+        // Better remap default keybindings to CodeMirror keybindings.
+        // https://github.com/microsoft/monaco-editor/issues/102
+        // https://github.com/microsoft/monaco-editor/issues/1350
+        Html.li "To see the context menu, right-MouseClick (Crl-MouseClick on Mac)."
+        Html.li "Select columns (column mode) by holding down Shift + Alt (Shift + option on Mac), then MousePress-and-Drag."
+        Html.li "Add additional cursors by holding down Alt (option on Mac) then MouseClick where you want the cursors then release Alt."
+        Html.li "Drag selected text with the mouse."
+        Html.li "Press F1 to open the command palette that shows all available commands and keyboard shortcuts."
       ]
     ]
   ]
@@ -363,12 +398,53 @@ let RootDivComponent (model, dispatch) =
     ]
   ]
 
+let addDragAndDropListener (dispatch: Msg -> unit) =
+  document.addEventListener("dragover", fun e ->
+    e.stopPropagation()
+     // Without preventDefault, the dragged file is opened by the browser.
+    e.preventDefault()
+    (e :?> DragEvent).dataTransfer.dropEffect <- "copy"
+  )
+
+  document.addEventListener("dragenter", fun e ->
+    e.stopPropagation()
+    e.preventDefault()
+    dispatch OnDragenter
+  )
+
+  document.addEventListener("dragleave", fun e ->
+    e.stopPropagation()
+    e.preventDefault()
+    dispatch OnDragleave
+  )
+
+  document.addEventListener("drop", fun e ->
+    e.stopPropagation()
+    e.preventDefault()
+    let fileList = (e :?> DragEvent).dataTransfer.files
+    let files = [for i in 0..fileList.length -> fileList.item(i)]
+    OnDrop files |> dispatch
+  )
+
 // Website markup definition.
 [<ReactComponent>]
-let App (model, dispatch) =
+let App (model: Model, dispatch) =
   React.useEffectOnce(fun () ->
     window.addEventListener("resize", fun _ -> WindowWidthChaned window.innerWidth |> dispatch)
+    addDragAndDropListener dispatch
   )
+  React.useEffect(
+    (fun () -> 
+      let editAreaElem = (document.querySelector(".monaco-editor-background") :?> IHTMLElement)
+      let marginElem = (document.querySelector(".monaco-editor .margin") :?> IHTMLElement)
+      if model.DragModel.isDragging then
+        editAreaElem.style.backgroundColor <- "#737373"
+        marginElem.style.backgroundColor <- "#737373"
+      else
+        editAreaElem.style.backgroundColor <- ""
+        marginElem.style.backgroundColor <- ""
+    ),
+    [|model.DragModel.isDragging :> obj|])
   Mui.themeProvider [
     themeProvider.theme Themes.darkTheme
     themeProvider.children [

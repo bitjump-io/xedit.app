@@ -14,7 +14,7 @@
     "typePrefixing": { "enabled": true },
     "unionDefinitionIndentation": { "enabled": true },
     "moduleDeclSpacing": { "enabled": false },
-    "classMemberSpacing": { "enabled": true },
+    "classMemberSpacing": { "enabled": false },
     "tupleCommaSpacing": { "enabled": true },
     "tupleIndentation": { "enabled": true },
     "tupleParentheses": { "enabled": false },

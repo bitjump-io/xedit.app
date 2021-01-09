@@ -9,10 +9,12 @@
         <Compile Include="Icons.fs" />
         <Compile Include="Themes.fs" />
         <Compile Include="FileTools.fs" />
+        <Compile Include="ts2fs/Browser.DomEx.fs" />
         <Compile Include="App.fs" />
         <Compile Include="Main.fs" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Fable.Browser.Dom" Version="2.2.0" />
         <PackageReference Include="Fable.Elmish.Debugger" Version="3.2.0" />
         <PackageReference Include="Fable.Elmish.HMR" Version="4.1.0" />
         <PackageReference Include="Fable.Elmish.React" Version="3.0.1" />
