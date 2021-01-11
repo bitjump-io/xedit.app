@@ -7,17 +7,18 @@ open Browser.Types
 
 type IExports =
   abstract create: elem: HTMLElement * dimension: Dimension -> IMonacoEditor
-  abstract dispose: editor: IMonacoEditor -> unit
+  abstract addTextModel: value: string * language: string -> editor: IMonacoEditor -> int
+  abstract removeTextModel: modelIndex: int -> editor: IMonacoEditor -> unit
+  abstract setTextModelIndex: modelIndex: int -> editor: IMonacoEditor -> unit
   abstract layout: dimension: Dimension -> editor: IMonacoEditor -> unit
   abstract setWordWrap: value: bool -> editor: IMonacoEditor -> unit
-  abstract setValue: newValue: string -> editor: IMonacoEditor -> unit
   abstract setLanguage: languageId: string -> editor: IMonacoEditor -> unit
 
 [<ImportAll("./MonacoEditor")>]
 let Editor: IExports = jsNative
 
 type IMonacoEditor =
-  interface end
+  abstract currentTextModelId: int
 
 // fsharplint:disable-next-line
 type Dimension = { width: int; height: int }

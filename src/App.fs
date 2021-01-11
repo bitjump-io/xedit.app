@@ -44,6 +44,10 @@ type DragModel = { DragenterCount: int; DragleaveCount: int }
     static member initial = { DragenterCount = 0; DragleaveCount = 0 }
     member x.isDragging = x.DragenterCount > x.DragleaveCount
 
+type TabItemModel = { ModelIndex: int; Name: string; Language: EditorLanguage }
+  with
+    static member initial = { ModelIndex = 0; Name = "Untitled 1"; Language = PlainText }
+
 [<RequireQualifiedAccess>]
 type ControlId =
   | None
@@ -56,6 +60,7 @@ let mutable monacoEditor: IMonacoEditor option = None
 // Model holds the current state.
 type Model = 
   { SelectedTabId: int
+    TabItems: TabItemModel list
     EditorHeight: int
     EditorOptions: EditorOptions
     EditorLanguage: EditorLanguage
@@ -75,15 +80,19 @@ type Msg =
   | DebouncerSelfMsg of Debouncer.SelfMessage<Msg> // This is the message used by the Debouncer.
   | EndOfWindowWidthChaned // Message we want to debounce.
   | TabChanged of int
+  | AddTab of TabItemModel
+  | RemoveTab of int
   | EditorLanguageChanged of EditorLanguage
   | ShowTooltipChanged of ControlId
   | OnDragenter
   | OnDragleave
   | OnDrop of File list
+  | OnPromiseError of exn
 
 // The init function will produce an initial state once the program starts running.  It can take any arguments.
 let init () =
   { SelectedTabId = 0
+    TabItems = [TabItemModel.initial]
     EditorHeight = 0
     EditorOptions = EditorOptions.initial
     EditorLanguage = PlainText
@@ -104,6 +113,14 @@ let getElementById id =
 
 let click (el: HTMLElement) =
   el.click()
+
+let getLangugeFromFilename (fileName: string) =
+  if fileName.EndsWith(".js") then JavaScript
+  elif fileName.EndsWith(".ts") then TypeScript
+  else PlainText
+
+let replaceItemAtIndex (list: 'a list, index: int, newItem: 'a) =
+  list.[..(index - 1)] @ newItem :: list.[(index + 1)..]
 
 // Helpers to update nested state.
 let updateEditorOptions (msg: Msg) (model: EditorOptions) =
@@ -134,18 +151,21 @@ let update (msg: Msg) (model: Model) =
   | FilesAdded files
   | OnDrop files ->
     let (dragModel, dragCmd) = updateDragModel msg model.DragModel
-    let model = { model with DragModel = dragModel }
-    if not files.IsEmpty then
-      printfn "files added %A" (files.[0].name)
-      let lang = 
-        if files.[0].name.EndsWith(".js") then JavaScript
-        elif files.[0].name.EndsWith(".ts") then TypeScript
-        else PlainText
-      let contentPromise = FileTools.readAsText (0, files.[0])
-      Promise.iter (fun text -> Option.iter (Editor.setValue(text)) monacoEditor) contentPromise
-      model, Cmd.batch [dragCmd; (Cmd.ofMsg (EditorLanguageChanged lang))]
-    else
-      model, dragCmd
+    let tabItemModelPromises = 
+      if monacoEditor.IsSome then
+        let monacoEditorVal = monacoEditor.Value
+        [for file in files -> 
+          FileTools.readAsText (0, file)
+          |> Promise.map (fun text -> 
+            let syntaxLang = getLangugeFromFilename(file.name)
+            let modelIndex = Editor.addTextModel (text, unbox<string> syntaxLang) monacoEditorVal
+            { ModelIndex = modelIndex; Name = file.name; Language = syntaxLang }
+          )
+        ]
+      else
+        []
+    let newModel = { model with DragModel = dragModel }
+    newModel, Cmd.batch (dragCmd :: [for t in tabItemModelPromises -> Cmd.OfPromise.either (fun _ -> t) () AddTab OnPromiseError])
   | WindowWidthChaned newWidth ->
     let (debouncerModel, debouncerCmd) =
       model.Debouncer
@@ -163,16 +183,34 @@ let update (msg: Msg) (model: Model) =
     | None -> ()
     model, Cmd.none
   | TabChanged selectedTabId ->
-    { model with SelectedTabId = selectedTabId }, Cmd.none
+    console.log("tab changed " + string selectedTabId)
+    let tabModel = model.TabItems.Item(selectedTabId)
+    Option.iter (Editor.setTextModelIndex(tabModel.ModelIndex)) monacoEditor
+    { model with SelectedTabId = selectedTabId; EditorLanguage = tabModel.Language }, Cmd.none
   | EditorLanguageChanged editorLanguage ->
     Option.iter (Editor.setLanguage(unbox<string> editorLanguage)) monacoEditor 
-    { model with EditorLanguage = editorLanguage }, Cmd.none
+    let tabModel = model.TabItems.Item(model.SelectedTabId)
+    let newTabModel = { tabModel with Language = editorLanguage }
+    let newTabModels = replaceItemAtIndex(model.TabItems, model.SelectedTabId, newTabModel)
+    { model with EditorLanguage = editorLanguage; TabItems = newTabModels }, Cmd.none
   | ShowTooltipChanged controlId ->
     { model with ShowTooltipControlId = controlId }, Cmd.none
   | OnDragenter
   | OnDragleave ->
     let (dragModel, dragCmd) = updateDragModel msg model.DragModel
     { model with DragModel = dragModel }, dragCmd
+  | AddTab newTab ->
+    // Add new tabs to the right of the currently selected tab.
+    let tabsLeftToNewTab = model.TabItems.[..model.SelectedTabId]
+    let tabsRightToNewTab = model.TabItems.[(model.SelectedTabId + 1)..]
+    let tabs = tabsLeftToNewTab @ newTab :: tabsRightToNewTab
+    Option.iter (Editor.setTextModelIndex(newTab.ModelIndex)) monacoEditor
+    { model with TabItems = tabs; SelectedTabId = model.SelectedTabId + 1 }, Cmd.none
+  | RemoveTab index ->
+    model, Cmd.none
+  | OnPromiseError error ->
+    console.error("An error occured when fetching data", error)
+    model, Cmd.none
 
 // Styles documentation links
 // - https://github.com/cmeeren/Feliz.MaterialUI/blob/master/docs-app/public/pages/samples/sign-in/SignIn.fs
@@ -235,7 +273,7 @@ let EditorComponent (model, dispatch) =
         EditorCreated (Height height) |> dispatch
         monacoEditor
       | None -> None
-    React.createDisposable(fun () -> if editor.IsSome then Editor.dispose(editor.Value))
+    React.createDisposable(fun () -> console.error("Should never dispose EditorComponent"))
   )
   Html.div [
     prop.style [style.display.block; style.width length.auto; style.height length.auto; style.minHeight 100; style.border (1, borderStyle.solid, "#858585")]
@@ -330,28 +368,16 @@ let tabsWithContentElement model dispatch =
             tabs.indicatorColor.primary
             tabs.textColor.primary
             tabs.children [
-              Mui.tab [
-                tab.label "tab 1"
-              ]
-              Mui.tab [
-                tab.label "tab 2"
-              ]
+              for t in model.TabItems ->
+                Mui.tab [
+                  tab.label t.Name
+                ]
             ]
           ]
         ]
       ]
-      Mui.tabPanel [
-        prop.style [style.padding 0]
-        tabPanel.value "0"
-        tabPanel.children [
-          EditorComponent(model, dispatch)
-        ]
-      ]
-      Mui.tabPanel [
-        tabPanel.value "1"
-        tabPanel.children [
-          Html.text "Just some plain text"
-        ]
+      Html.div [
+        EditorComponent(model, dispatch)
       ]
     ]
   ]
@@ -366,9 +392,21 @@ let contentBelowTabsElement =
         // https://github.com/microsoft/monaco-editor/issues/102
         // https://github.com/microsoft/monaco-editor/issues/1350
         Html.li "To see the context menu, right-MouseClick (Crl-MouseClick on Mac)."
-        Html.li "Select columns (column mode) by holding down Shift + Alt (Shift + option on Mac), then MousePress-and-Drag."
+        Html.li "Hold down Alt (option on Mac) and navigate with the left and right arrows to move word-by-word. Additionally hold down Shift to select while moving."
+        Html.li "Hold down Ctrl (command on Mac) and navigate with the left and right arrows to move to the start and end of the line. Additionally hold down Shift to select while moving."
+        Html.li "Hold down Alt (option on Mac) and navigate with the up and down arrows to move the current row up or down."
         Html.li "Add additional cursors by holding down Alt (option on Mac) then MouseClick where you want the cursors then release Alt."
-        Html.li "Drag selected text with the mouse."
+        Html.li "To add multiple cursors in the same column at once, MouseClick in the row and column where the firt cursor should be then holding down Shift + Alt (Shift + option on Mac) and MouseClick the last row of the same column."
+        Html.li "To select text in column mode, MouseClick at the upper left start of the text that you want to select, then hold down Shift + Alt (Shift + option on Mac) and MouseClick or MousePress-and-Drag to select the bottom right of the selection."
+        Html.li "You can drag selected text with the mouse."
+        Html.li "Ctrl-a selects everything."
+        Html.li "Ctrl-c is copy."
+        Html.li "Ctrl-v is paste."
+        Html.li "Ctrl-x is cut."
+        Html.li "Ctrl-z is undo."
+        Html.li "Ctrl-Shift-z is redo."
+        Html.li "Ctrl-MouseClick to open links."
+        Html.li "Hold down Shift and move the cursor to select text. Esc to undo the selection."
         Html.li "Press F1 to open the command palette that shows all available commands and keyboard shortcuts."
       ]
     ]
@@ -422,7 +460,7 @@ let addDragAndDropListener (dispatch: Msg -> unit) =
     e.stopPropagation()
     e.preventDefault()
     let fileList = (e :?> DragEvent).dataTransfer.files
-    let files = [for i in 0..fileList.length -> fileList.item(i)]
+    let files = [for i in 0..(fileList.length - 1) -> fileList.item(i)]
     OnDrop files |> dispatch
   )
 
