@@ -114,7 +114,7 @@ let getElementById id =
 let click (el: HTMLElement) =
   el.click()
 
-let getLangugeFromFilename (fileName: string) =
+let getLanguageFromFilename (fileName: string) =
   if fileName.EndsWith(".js") then JavaScript
   elif fileName.EndsWith(".ts") then TypeScript
   else PlainText
@@ -131,10 +131,11 @@ let updateEditorOptions (msg: Msg) (model: EditorOptions) =
 // Helpers to update nested state.
 let updateDragModel (msg: Msg) (model: DragModel) =
   match msg with
+  | FilesAdded _ -> DragModel.initial, Cmd.none
   | OnDrop _ -> DragModel.initial, Cmd.none
   | OnDragenter _ -> { model with DragenterCount = model.DragenterCount + 1 }, Cmd.none
   | OnDragleave _ -> { model with DragleaveCount = model.DragleaveCount + 1 }, Cmd.none
-  | _ -> failwith (sprintf "No case implemented to update EditorOptions for message %A" msg)
+  | _ -> failwith (sprintf "No case implemented to update updateDragModel for message %A" msg)
 
 // The update function will receive the change required by Msg, and the current state. It will produce a new state and potentially new command(s).
 let update (msg: Msg) (model: Model) =
@@ -157,7 +158,7 @@ let update (msg: Msg) (model: Model) =
         [for file in files -> 
           FileTools.readAsText (0, file)
           |> Promise.map (fun text -> 
-            let syntaxLang = getLangugeFromFilename(file.name)
+            let syntaxLang = getLanguageFromFilename(file.name)
             let modelIndex = Editor.addTextModel (text, unbox<string> syntaxLang) monacoEditorVal
             { ModelIndex = modelIndex; Name = file.name; Language = syntaxLang }
           )
