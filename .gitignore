@@ -203,3 +203,6 @@ out
 .vs
 .ionide
 *.fs.js
+
+# wrangler/cloudflare
+dist/
