@@ -19,7 +19,7 @@ const CONFIG = {
   // See https://github.com/jantimon/html-webpack-plugin
   indexHtmlTemplate: "./src/index.html",
   fsharpEntry: "./build/Main.fs.js",
-  tsEntry: "./src/main.ts",
+  tsEntry: "./src/Main.ts",
   outputDir: "./deploy",
   assetsDir: "./public",
   devServerPort: 8080,

@@ -2,6 +2,7 @@ module Model
 
 open Thoth.Elmish
 open Fable.Core
+open MonacoEditor
 
 [<StringEnum>]
 type EditorLanguage =
@@ -50,3 +51,6 @@ type Model =
     DevicePixelRatio: float
     Debouncer: Debouncer.State
     DragModel: DragModel }
+
+ // Not included in Model type because quite large.
+let mutable monacoEditor: IMonacoEditor option = None

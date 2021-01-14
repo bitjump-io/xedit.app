@@ -7,9 +7,6 @@ open Model
 open Msg
 open MonacoEditor
 
-// Not included in model because quite large.
-let mutable monacoEditor: IMonacoEditor option = None
-
 // The MonacoEditor as a react component.
 [<ReactComponent>]
 let EditorComponent (model, dispatch) =

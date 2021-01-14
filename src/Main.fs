@@ -1,14 +1,12 @@
 module Main
 
-open Fable.Core.JsInterop
-
 open Elmish
 open Elmish.React
 open Elmish.Debug
 open Elmish.HMR
 
 // App
-Program.mkProgram App.init App.update App.render
+Program.mkProgram Update.init Update.update App.render
 #if DEBUG
 |> Program.withDebugger
 #endif
