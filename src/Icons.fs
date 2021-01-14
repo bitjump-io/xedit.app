@@ -9,3 +9,6 @@ let inline gitHubIcon b : ReactElement =
 
 let inline wrapTextIcon b : ReactElement = 
   ofImport "default" "@material-ui/icons/WrapText" (keyValueList CaseRules.LowerFirst b) []
+
+let inline AddIcon b : ReactElement = 
+  ofImport "default" "@material-ui/icons/Add" (keyValueList CaseRules.LowerFirst b) []

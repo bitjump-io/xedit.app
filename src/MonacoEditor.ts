@@ -64,7 +64,7 @@ class MonacoEditor implements IMonacoEditor {
   }
 
   addTextModel(value: string, language: string): number {
-    if (!value) {
+    if (value == null) {
       throw new Error("Invalid argument: value must not be null.");
     }
     const newModel = monaco.editor.createModel(value, language, null);

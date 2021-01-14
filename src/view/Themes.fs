@@ -41,6 +41,19 @@ let darkTheme = Styles.createMuiTheme([
     style.custom ("&:focus", [style.borderRadius 4; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
   ]
   theme.overrides.muiInputBase.inputMarginDense [
-    style.paddingTop length.auto // Clear 3px paddingTop.
+    // Clear 3px paddingTop.
+    style.paddingTop length.auto
+  ]
+  theme.overrides.muiIconButton.root [
+    style.color "rgb(133,133,133)"
+  ]
+  theme.overrides.muiTabs.root [
+    //style.display.flex
+  ]
+  theme.overrides.muiTab.root [
+    // Let tab width expand to tab label length.
+    style.maxWidth length.auto
+    // No uppercase.
+    style.textTransform.none
   ]
 ])

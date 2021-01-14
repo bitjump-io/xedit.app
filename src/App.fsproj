@@ -7,9 +7,21 @@
         <None Include="index.html" />
         <Compile Include="MonacoEditor.fs" />
         <Compile Include="Icons.fs" />
-        <Compile Include="Themes.fs" />
         <Compile Include="FileTools.fs" />
         <Compile Include="ts2fs/Browser.DomEx.fs" />
+        <Compile Include="Model.fs" />
+        <Compile Include="Msg.fs" />
+        <Compile Include="view/Literals.fs" />
+        <Compile Include="view/HtmlEx.fs" />
+        <Compile Include="view/MuiEx.fs" />
+        <Compile Include="view/Themes.fs" />
+        <Compile Include="view/Styles.fs" />
+        <Compile Include="view/Header.fs" />
+        <Compile Include="view/Editor.fs" />
+        <Compile Include="view/Iconbar.fs" />
+        <Compile Include="view/Tabbar.fs" />
+        <Compile Include="view/Helptext.fs" />
+        <Compile Include="view/RootDiv.fs" />
         <Compile Include="App.fs" />
         <Compile Include="Main.fs" />
     </ItemGroup>
