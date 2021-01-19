@@ -5,8 +5,10 @@ open Feliz.MaterialUI
 open Model
 open Msg
 open Editor
+open Browser
 
 let tabBarElement model dispatch (classes: CssClasses) =
+  console.log("selected tab id", model.SelectedTabId)
   Mui.tabContext [
     tabContext.value (string model.SelectedTabId)
     tabContext.children [
@@ -22,12 +24,31 @@ let tabBarElement model dispatch (classes: CssClasses) =
                 tabs.onChange (TabChanged >> dispatch)
                 tabs.indicatorColor.primary
                 tabs.textColor.primary
-                tabs.children [
-                  for t in model.TabItems ->
+                tabs.children (
+                  model.TabItems
+                  |> List.mapi (fun tabIndex t ->
                     Mui.tab [
-                      tab.label t.Name
+                      // Add class for hover effect.
+                      tab.classes.root "MuiButton-root"
+                      tab.disableRipple true
+                      tab.label [
+                        Html.span [
+                          prop.key "1"
+                          prop.style [style.flexGrow 1]
+                          prop.children [ Html.text t.Name ]
+                        ]
+                        Mui.iconButton [ 
+                          prop.key "2"
+                          iconButton.component' "div"
+                          prop.style [style.height 20; style.width 20]
+                          prop.onClick (fun e -> RemoveTab tabIndex |> dispatch; e.stopPropagation())
+                          iconButton.children (Icons.CloseIcon [
+                            prop.style [style.height 16; style.width 18]
+                          ]) 
+                        ]
+                      ]
                     ]
-                ]
+                    ))
               ]
               Icons.VerticalBar [
               ]

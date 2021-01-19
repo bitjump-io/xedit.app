@@ -22,6 +22,7 @@ let init () =
     DevicePixelRatio = window.devicePixelRatio
     Debouncer = Debouncer.create()
     DragModel = DragModel.initial
+    ThemeKind = ThemeKind.Dark
   }, 
   Cmd.none
 
@@ -34,6 +35,9 @@ let addItemAtIndex (list: 'a list, index: int, newItem: 'a) =
   let tabsLeftToNewTab = list.[..index - 1]
   let tabsRightToNewTab = list.[(index)..]
   tabsLeftToNewTab @ newItem :: tabsRightToNewTab
+
+let removeItemAtIndex (list: 'a list, index: int) =
+  list.[..(index - 1)] @ list.[(index + 1)..]
 
 let replaceItemAtIndex (list: 'a list, index: int, newItem: 'a) =
   list.[..(index - 1)] @ newItem :: list.[(index + 1)..]
@@ -76,7 +80,7 @@ let update (msg: Msg) (model: Model) =
           |> Promise.map (fun text -> 
             let syntaxLang = getLanguageFromFilename(file.name)
             let modelIndex = Editor.addTextModel (text, unbox<string> syntaxLang) monacoEditorVal
-            { ModelIndex = modelIndex; Name = file.name; Language = syntaxLang; IsUntitled = false }
+            { Name = file.name; ModelIndex = modelIndex; Language = syntaxLang; UntitledIndex = 0 }
           )
         ]
       else
@@ -120,18 +124,26 @@ let update (msg: Msg) (model: Model) =
     let msg =
       if monacoEditor.IsSome then
         let modelIndex = Editor.addTextModel ("", unbox<string> PlainText) monacoEditor.Value
-        let untitledCount = model.TabItems |> (List.filter (fun t -> t.IsUntitled) >> List.length)
-        Cmd.ofMsg (AddTab { ModelIndex = modelIndex; Name = "Untitled " + string (untitledCount + 1); Language = PlainText; IsUntitled = true })
+        let untitledIndex = 
+          if List.isEmpty model.TabItems then 1
+          else 1 + (model.TabItems |> (List.map (fun x -> x.UntitledIndex) >> List.max))
+        Cmd.ofMsg (AddTab { Name = "Untitled " + string (untitledIndex); ModelIndex = modelIndex; Language = PlainText; UntitledIndex = untitledIndex })
       else
         Cmd.none
     model, msg
   | AddTab newTab ->
-    // Add new tabs to the right of the currently selected tab.
-    let tabs = addItemAtIndex (model.TabItems, model.SelectedTabId + 1, newTab)
+    let tabs = model.TabItems @ [newTab]
     Option.iter (Editor.setTextModelIndex(newTab.ModelIndex)) monacoEditor
-    { model with TabItems = tabs; SelectedTabId = model.SelectedTabId + 1 }, Cmd.none
+    { model with TabItems = tabs; SelectedTabId = List.length tabs - 1 }, Cmd.none
   | RemoveTab index ->
-    model, Cmd.none
+    console.log("removeTab", index)
+    let tabs = removeItemAtIndex (model.TabItems, index)
+    let cmd = if List.isEmpty tabs then Cmd.ofMsg AddEmptyTab else Cmd.none
+    let selectedTabId = if model.SelectedTabId > index || model.SelectedTabId = List.length tabs then model.SelectedTabId - 1 else model.SelectedTabId
+    console.log("removetab index", index, " selected tab id", selectedTabId)
+    { model with TabItems = tabs; SelectedTabId = selectedTabId }, cmd
   | OnPromiseError error ->
-    console.error("An error occured when fetching data", error)
+    console.error("An promise was rejected: ", error)
     model, Cmd.none
+  | ThemeKind themeKind ->
+    { model with ThemeKind = themeKind }, Cmd.none

@@ -27,15 +27,20 @@ type DragModel = { DragenterCount: int; DragleaveCount: int }
     static member initial = { DragenterCount = 0; DragleaveCount = 0 }
     member x.isDragging = x.DragenterCount > x.DragleaveCount
 
-type TabItemModel = { ModelIndex: int; Name: string; Language: EditorLanguage; IsUntitled: bool }
+type TabItemModel = { Name: string; ModelIndex: int; Language: EditorLanguage; UntitledIndex: int }
   with
-    static member initial = { ModelIndex = 0; Name = "Untitled 1"; Language = PlainText; IsUntitled = true }
+    static member initial = { Name = "Untitled 1"; ModelIndex = 0; Language = PlainText; UntitledIndex = 1 }
 
 [<RequireQualifiedAccess>]
 type ControlId =
   | None
   | WrapText
   | EditorLanguage
+
+[<RequireQualifiedAccess>]
+type ThemeKind =
+  | Dark
+  | Light
 
 type CssClasses = { RootDiv: string }
 
@@ -50,7 +55,8 @@ type Model =
     WindowInnerWidth: float
     DevicePixelRatio: float
     Debouncer: Debouncer.State
-    DragModel: DragModel }
+    DragModel: DragModel
+    ThemeKind: ThemeKind }
 
  // Not included in Model type because quite large.
 let mutable monacoEditor: IMonacoEditor option = None

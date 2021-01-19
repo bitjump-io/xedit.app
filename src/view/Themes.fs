@@ -5,6 +5,7 @@ open Feliz.MaterialUI
 // Themes documentation links
 // - https://cmeeren.github.io/Feliz.MaterialUI/#usage/themes
 // - https://material-ui.com/customization/theming/
+
 let defaultTheme = Styles.createMuiTheme()
 
 let darkTheme = Styles.createMuiTheme([
@@ -28,6 +29,9 @@ let darkTheme = Styles.createMuiTheme([
   ]
   theme.props.muiAppBar [
     appBar.color.default'
+  ]
+  theme.overrides.muiButtonBase.root [
+    style.custom ("&:hover", [style.borderRadius 4; style.backgroundColor.red; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
   ]
   theme.overrides.muiInputBase.input [
     style.borderRadius 4
@@ -55,5 +59,14 @@ let darkTheme = Styles.createMuiTheme([
     style.maxWidth length.auto
     // No uppercase.
     style.textTransform.none
+    // Make label area wider to show close button at right.
+    style.padding (0, 0, 0, 0)
+  ]
+  theme.overrides.muiSelect.root [
+    // No uppercase.
+    style.textTransform.none
+  ]
+  theme.overrides.muiTab.wrapper [
+    style.flexDirection.row
   ]
 ])

@@ -57,6 +57,15 @@ let App (model: Model, dispatch) =
         marginElem.style.backgroundColor <- ""
     ),
     [|model.DragModel.isDragging :> obj|])
+  React.useEffect(
+    (fun () ->
+      let newColor = 
+        match model.ThemeKind with
+        | ThemeKind.Dark -> "#1e1e1e"
+        | ThemeKind.Light -> ""
+      (document.body :?> IHTMLElement).style.backgroundColor <- newColor
+    ),
+    [|model.ThemeKind :> obj|])
   Mui.themeProvider [
     themeProvider.theme Themes.darkTheme
     themeProvider.children [
