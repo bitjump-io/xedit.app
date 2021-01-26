@@ -7,7 +7,7 @@ open Styles
 open Header
 open Iconbar
 open Tabbar
-open Helptext
+open Keybindings
 
 [<ReactComponent>]
 let RootDivComponent (model, dispatch) =
@@ -25,7 +25,7 @@ let RootDivComponent (model, dispatch) =
               headerElement model dispatch
               toolbarElement model dispatch classes
               tabBarElement model dispatch classes
-              helptextElement
+              keybindingsTable
             ]
           ]
         ]

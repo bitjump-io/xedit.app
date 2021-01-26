@@ -21,7 +21,12 @@ let darkTheme = Styles.createMuiTheme([
   theme.overrides.muiAppBar.colorDefault [
     style.backgroundColor defaultTheme.palette.grey.A400
   ]
+  theme.overrides.muiPopover.root [
+    // Need to set color directly because body is the parent.
+    style.color "#ccc"
+  ]
   theme.overrides.muiPaper.root [
+    style.color "inherit"
     style.backgroundColor defaultTheme.palette.grey.A400
   ]
   theme.overrides.muiDrawer.paper [
@@ -31,7 +36,14 @@ let darkTheme = Styles.createMuiTheme([
     appBar.color.default'
   ]
   theme.overrides.muiButtonBase.root [
-    style.custom ("&:hover", [style.borderRadius 4; style.backgroundColor.red; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
+    style.color "inherit"
+    //style.custom ("&:hover", [style.borderRadius 4; style.backgroundColor.red; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
+  ]
+  theme.overrides.muiButton.root [
+    style.color "inherit"
+  ]
+  theme.overrides.muiInputBase.root [
+    style.color "inherit"
   ]
   theme.overrides.muiInputBase.input [
     style.borderRadius 4
