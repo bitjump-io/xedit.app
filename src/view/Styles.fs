@@ -27,7 +27,7 @@ let useStyles: unit -> CssClasses = Styles.makeStyles(fun styles theme ->
       style.custom ("& kbd", 
         styles.create [
           style.backgroundColor("hsla(0,0%,50%,.47)")
-          style.padding (1, 2, 0, 2)
+          style.padding (1, 2, 1, 2)
           style.marginRight 2
           style.marginLeft 2
           style.verticalAlign.middle

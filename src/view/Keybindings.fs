@@ -29,12 +29,12 @@ let keybindingsTable =
             ]
             Mui.tableRow [
               Mui.tableCell (wrapper() ++ Kbd.ctrl(Key.LeftArrow) ++ "/" ++ Kbd.ctrl(Key.RightArrow) ++ ())
-              Mui.tableCell (wrapper() ++ "Move to the first/last column. Hold down Shift to select. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
+              Mui.tableCell (wrapper() ++ "Move to the first/last column. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
               Mui.tableCell ""
             ]
             Mui.tableRow [
               Mui.tableCell (wrapper() ++ Kbd.ctrl(Key.UpArrow) ++ "/" ++ Kbd.ctrl(Key.DownArrow) ++ ())
-              Mui.tableCell (wrapper() ++ "Move to the first/last row. Hold down Shift to select. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
+              Mui.tableCell (wrapper() ++ "Move to the first/last row. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
               Mui.tableCell ""
             ]
             Mui.tableRow [
@@ -44,32 +44,32 @@ let keybindingsTable =
             ]
             Mui.tableRow [
               Mui.tableCell [Kbd.ctrl(Key.C)]
-              Mui.tableCell "Copies selected text, or the line, if no text is selected, to the clipboard."
+              Mui.tableCell "Copy selected text, or the line, if no text is selected, to the clipboard."
               Mui.tableCell ""
             ]
             Mui.tableRow [
               Mui.tableCell [Kbd.ctrl(Key.V)]
-              Mui.tableCell "Inserts the clipboard content at the cursor(s) location(s)."
+              Mui.tableCell "Insert the clipboard content at the cursor(s) location(s)."
               Mui.tableCell ""
             ]
             Mui.tableRow [
               Mui.tableCell [Kbd.ctrl(Key.X)]
-              Mui.tableCell "Copies and deletes selected text, or the line, if no text is selected, to the clipboard."
+              Mui.tableCell "Copy and delete selected text, or the line, if no text is selected, to the clipboard."
               Mui.tableCell ""
             ]
             Mui.tableRow [
               Mui.tableCell (wrapper() ++ Kbd.alt(Key.UpArrow) ++ "/" ++ Kbd.alt(Key.DownArrow) ++ ())
-              Mui.tableCell "Move current line up/down."
+              Mui.tableCell "Move the current line up/down."
               Mui.tableCell ""
             ]
             Mui.tableRow [
               Mui.tableCell [Kbd.ctrl(Key.F)]
-              Mui.tableCell "Opens the find window with the selected text pre-filled."
+              Mui.tableCell "Open the find window with the selected text pre-filled."
               Mui.tableCell ""
             ]
             Mui.tableRow [
               Mui.tableCell (wrapper() ++ Kbd.altWithMouseLeft() ++ ())
-              Mui.tableCell "Add an additional cursor"
+              Mui.tableCell "Add an additional cursor."
               Mui.tableCell ""
             ]
           ]

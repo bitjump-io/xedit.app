@@ -72,7 +72,7 @@ let darkTheme = Styles.createMuiTheme([
     // No uppercase.
     style.textTransform.none
     // Make label area wider to show close button at right.
-    style.padding (0, 0, 0, 0)
+    style.padding (0, 0, 0, 5)
   ]
   theme.overrides.muiSelect.root [
     // No uppercase.
