@@ -48,6 +48,10 @@ class MonacoEditor implements IMonacoEditor {
       minimap: {
         enabled: false
       },
+      //renderWhitespace?: 'none' | 'boundary' | 'selection' | 'trailing' | 'all';
+      //renderControlCharacters?: boolean;
+      // allow move selections via drag and drop.
+      dragAndDrop: true,
       dimension,
       padding: {
         top: 5,
@@ -127,6 +131,22 @@ export function layout(dimension: Dimension, editor: IMonacoEditor): void  {
 export function setWordWrap(value: boolean, editor: IMonacoEditor): void {
   // 'off' | 'on' | 'wordWrapColumn' | 'bounded'
   (editor as MonacoEditor).editor.updateOptions({ wordWrap: (value === true ? 'on' : 'off') });
+}
+
+function changeFontSize(editor: IMonacoEditor, change: number): void {
+  let monacoEditor = (editor as MonacoEditor).editor;
+  let fontSize = monacoEditor.getOption(monaco.editor.EditorOption.fontSize);
+  monacoEditor.updateOptions({ fontSize: fontSize + change });
+}
+
+// The F# signature is a curried function. It gets compiled to a function call with all arguments passed at once.
+export function increaseFontSize(editor: IMonacoEditor): void {
+  changeFontSize(editor, 1);
+}
+
+// The F# signature is a curried function. It gets compiled to a function call with all arguments passed at once.
+export function decreaseFontSize(editor: IMonacoEditor): void {
+  changeFontSize(editor, -1);
 }
 
 // The F# signature is a curried function. It gets compiled to a function call with all arguments passed at once.

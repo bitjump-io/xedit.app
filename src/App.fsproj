@@ -6,6 +6,7 @@
     <!-- NOTE: THE ORDER IS IMPORTANT -->
         <None Include="index.html" />
         <Compile Include="editor/MonacoEditor.fs" />
+        <Compile Include="view/Icons.fs" />
         <Compile Include="helper/FileTools.fs" />
         <Compile Include="helper/view/MuiTypes.fs" />
         <Compile Include="helper/view/HtmlEx.fs" />
@@ -14,7 +15,6 @@
         <Compile Include="Model.fs" />
         <Compile Include="Msg.fs" />
         <Compile Include="Update.fs" />
-        <Compile Include="view/Icons.fs" />
         <Compile Include="view/MuiEx.fs" />
         <Compile Include="view/Themes.fs" />
         <Compile Include="view/Styles.fs" />

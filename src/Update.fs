@@ -140,10 +140,15 @@ let update (msg: Msg) (model: Model) =
     let tabs = removeItemAtIndex (model.TabItems, index)
     let cmd = if List.isEmpty tabs then Cmd.ofMsg AddEmptyTab else Cmd.none
     let selectedTabId = if model.SelectedTabId > index || model.SelectedTabId = List.length tabs then model.SelectedTabId - 1 else model.SelectedTabId
-    console.log("removetab index", index, " selected tab id", selectedTabId)
     { model with TabItems = tabs; SelectedTabId = selectedTabId }, cmd
   | OnPromiseError error ->
     console.error("An promise was rejected: ", error)
     model, Cmd.none
   | ThemeKind themeKind ->
     { model with ThemeKind = themeKind }, Cmd.none
+  | IncreaseFontSize ->
+    Option.iter (Editor.increaseFontSize) monacoEditor
+    model, Cmd.none
+  | DecreaseFontSize ->
+    Option.iter (Editor.decreaseFontSize) monacoEditor
+    model, Cmd.none

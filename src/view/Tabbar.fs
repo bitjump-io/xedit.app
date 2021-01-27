@@ -8,7 +8,6 @@ open Editor
 open Browser
 
 let tabBarElement model dispatch (classes: CssClasses) =
-  console.log("selected tab id", model.SelectedTabId)
   Mui.tabContext [
     tabContext.value (string model.SelectedTabId)
     tabContext.children [
@@ -42,7 +41,7 @@ let tabBarElement model dispatch (classes: CssClasses) =
                           iconButton.component' "div"
                           prop.style [style.height 20; style.width 20]
                           prop.onClick (fun e -> RemoveTab tabIndex |> dispatch; e.stopPropagation())
-                          iconButton.children (Icons.CloseIcon [
+                          iconButton.children (Icons.closeIcon [
                             prop.style [style.height 16; style.width 18]
                           ]) 
                         ]
@@ -50,12 +49,12 @@ let tabBarElement model dispatch (classes: CssClasses) =
                     ]
                     ))
               ]
-              Icons.VerticalBar [
+              Icons.verticalBar [
               ]
               Mui.iconButton [ 
                 prop.style [style.height 38; style.width 38; style.margin.auto; style.marginLeft 1; style.marginRight 5]
                 prop.onClick (fun _ -> dispatch AddEmptyTab)
-                iconButton.children (Icons.AddIcon []) 
+                iconButton.children (Icons.addIcon []) 
               ]
             ]
           ]

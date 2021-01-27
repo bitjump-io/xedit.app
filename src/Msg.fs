@@ -24,3 +24,5 @@ type Msg =
   | OnDrop of File list
   | OnPromiseError of exn
   | ThemeKind of ThemeKind
+  | IncreaseFontSize
+  | DecreaseFontSize

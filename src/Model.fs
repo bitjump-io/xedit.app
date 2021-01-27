@@ -36,6 +36,8 @@ type ControlId =
   | None
   | WrapText
   | EditorLanguage
+  | IncreaseFontSize
+  | DecreaseFontSize
 
 [<RequireQualifiedAccess>]
 type ThemeKind =

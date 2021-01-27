@@ -5,37 +5,7 @@ module HtmlEx
 open Feliz
 open Browser
 open Browser.Types
-open Feliz.MaterialUI
-open Fable.Core.JsInterop
-open Fable.Core
-
-type Mdi =
-  static member inline icon props = createElement (importDefault "@mdi/react/Icon") props
-  static member mouseLeftClickPath = "M539,203.646c-117.475,0-213,95.572-213,213.047v246.613c0,117.475,95.525,213.047,213,213.047s213-95.572,213-213.047  V416.693C752,299.219,656.475,203.646,539,203.646z M730,663.307c0,105.388-85.613,191.126-191,191.126s-191-85.738-191-191.126V533  h382V663.307z M730,511H549V225.846c101,5.357,181,88.908,181,190.848V511z"
-
-[<Erase>]
-// fsharplint:disable-next-line
-type icon =
-  static member inline path (value: string) =  Interop.mkAttr "path" value
-  static member inline size (value: string) =  Interop.mkAttr "size" value
-  static member inline title (value: string) =  Interop.mkAttr "title" value
-  static member inline flipHorizontal (value: bool) =  Interop.mkAttr "horizontal" value
-  static member inline flipVertical (value: bool) =  Interop.mkAttr "vertical" value
-
-let iconMouseLeftClick = Mdi.icon [
-  icon.path Mdi.mouseLeftClickPath
-  icon.size "25px"
-  prop.style [style.margin (-2, 0, -8, 0)]
-  prop.viewBox (0, 0, 1080, 1080)
-]
-
-let iconMouseRightClick = Mdi.icon [
-  icon.path Mdi.mouseLeftClickPath
-  icon.size "29px"
-  icon.flipHorizontal true
-  prop.style [style.margin (-2, 0, -10, 0)]
-  prop.viewBox (0, 0, 1080, 1080)
-]
+open Icons
 
 [<RequireQualifiedAccess>]
 type Key =
@@ -169,7 +139,7 @@ type Kbd =
         prop.title (asText(k1) + "+" + "MouseLeftButton")
         prop.children [
           Html.kbd (asSymbol(k1))
-          iconMouseLeftClick
+          mouseLeftClickIcon
         ]
       ]
   static member inline singleKey (k: Key) =

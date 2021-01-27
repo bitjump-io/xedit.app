@@ -12,6 +12,8 @@ type IExports =
   abstract setTextModelIndex: modelIndex: int -> editor: IMonacoEditor -> unit
   abstract layout: dimension: Dimension -> editor: IMonacoEditor -> unit
   abstract setWordWrap: value: bool -> editor: IMonacoEditor -> unit
+  abstract increaseFontSize: editor: IMonacoEditor -> unit 
+  abstract decreaseFontSize: editor: IMonacoEditor -> unit 
   abstract setLanguage: languageId: string -> editor: IMonacoEditor -> unit
 
 [<ImportAll("./MonacoEditor")>]

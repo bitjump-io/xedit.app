@@ -77,6 +77,9 @@ let keybindingsTable =
       ]
     ]
   ]
+  // hold down alt while scrolling with the mouse for fast scroll.
+  // ctrl (or command) -g go to line
+  // move selected text via drag-drop. -> not working
 
 // let helptextElement =
 //   Html.div [
