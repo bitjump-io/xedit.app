@@ -134,6 +134,15 @@ type Kbd =
           Html.kbd (asSymbol(k2))
         ]
       ]
+  static member inline multiKey (k1: Key, k2: Key, k3: Key) =
+    Html.span [
+        prop.title (asText(k1) + "+" + asText(k2) + "+" + asText(k3))
+        prop.children [
+          Html.kbd (asSymbol(k1))
+          Html.kbd (asSymbol(k2))
+          Html.kbd (asSymbol(k3))
+        ]
+      ]
   static member inline keyWithMouseLeft (k1: Key) =
     Html.span [
         prop.title (asText(k1) + "+" + "MouseLeftButton")
@@ -153,6 +162,7 @@ type Kbd =
   static member inline ctrlMac (k: Key) = Kbd.multiKey (Key.CtrlMac, k)
   static member inline ctrl () = Kbd.singleKey (Key.Ctrl)
   static member inline ctrl (k: Key) = Kbd.multiKey (Key.Ctrl, k)
+  static member inline ctrlShift (k: Key) = Kbd.multiKey (Key.Ctrl, Key.Shift, k)
   static member inline alt () = Kbd.singleKey (Key.Alt)
   static member inline alt (k: Key) = Kbd.multiKey (Key.Alt, k)
   static member inline altWithMouseLeft () = Kbd.keyWithMouseLeft (Key.Alt)

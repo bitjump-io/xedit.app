@@ -27,16 +27,16 @@ let keybindingsTable =
               Mui.tableCell (wrapper() ++ "Move one word to the left/right. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
               Mui.tableCell ""
             ]
-            Mui.tableRow [
-              Mui.tableCell (wrapper() ++ Kbd.ctrl(Key.LeftArrow) ++ "/" ++ Kbd.ctrl(Key.RightArrow) ++ ())
-              Mui.tableCell (wrapper() ++ "Move to the first/last column. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
-              Mui.tableCell ""
-            ]
-            Mui.tableRow [
-              Mui.tableCell (wrapper() ++ Kbd.ctrl(Key.UpArrow) ++ "/" ++ Kbd.ctrl(Key.DownArrow) ++ ())
-              Mui.tableCell (wrapper() ++ "Move to the first/last row. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
-              Mui.tableCell ""
-            ]
+            // Mui.tableRow [
+            //   Mui.tableCell (wrapper() ++ Kbd.ctrl(Key.LeftArrow) ++ "/" ++ Kbd.ctrl(Key.RightArrow) ++ ())
+            //   Mui.tableCell (wrapper() ++ "Move to the first/last column. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
+            //   Mui.tableCell ""
+            // ]
+            // Mui.tableRow [
+            //   Mui.tableCell (wrapper() ++ Kbd.ctrl(Key.UpArrow) ++ "/" ++ Kbd.ctrl(Key.DownArrow) ++ ())
+            //   Mui.tableCell (wrapper() ++ "Move to the first/last row. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
+            //   Mui.tableCell ""
+            // ]
             Mui.tableRow [
               Mui.tableCell [Kbd.ctrl(Key.A)]
               Mui.tableCell "Select everything."
@@ -55,6 +55,16 @@ let keybindingsTable =
             Mui.tableRow [
               Mui.tableCell [Kbd.ctrl(Key.X)]
               Mui.tableCell "Copy and delete selected text, or the line, if no text is selected, to the clipboard."
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
+              Mui.tableCell [Kbd.ctrl(Key.Z)]
+              Mui.tableCell "Undo last change."
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
+              Mui.tableCell [Kbd.ctrlShift(Key.Z)]
+              Mui.tableCell "Redo last change."
               Mui.tableCell ""
             ]
             Mui.tableRow [
