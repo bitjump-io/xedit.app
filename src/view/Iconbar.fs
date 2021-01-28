@@ -59,7 +59,7 @@ let toolbarElement model dispatch (classes: CssClasses) =
           prop.onClick (fun _ -> dispatch IncreaseFontSize)
           prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.IncreaseFontSize) |> dispatch)
           prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
-          iconButton.children (Icons.fontSizeIncreaseIcon) 
+          iconButton.children (Icons.fontSizeIncreaseIcon()) 
         ])
       MuiEx.withTooltip (
         "Decrease Font Size",
@@ -69,7 +69,7 @@ let toolbarElement model dispatch (classes: CssClasses) =
           prop.onClick (fun _ -> dispatch DecreaseFontSize)
           prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.DecreaseFontSize) |> dispatch)
           prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
-          iconButton.children (Icons.fontSizeDecreaseIcon) 
+          iconButton.children (Icons.fontSizeDecreaseIcon()) 
         ])
     ]
   ]

@@ -45,6 +45,8 @@ type Key =
   | CtrlMac
   | OptMac
   | CmdMac
+  | Home
+  | End
 
 let inline asSymbol (key: Key) =
   match key with
@@ -84,6 +86,8 @@ let inline asSymbol (key: Key) =
   | Key.CtrlMac -> "⌃"
   | Key.OptMac -> "⌥"
   | Key.CmdMac -> "⌘"
+  | Key.Home -> "Home"
+  | Key.End -> "End"
 
 let inline asText (key: Key) =
   match key with
@@ -123,6 +127,8 @@ let inline asText (key: Key) =
   | Key.CtrlMac -> "control"
   | Key.OptMac -> "option"
   | Key.CmdMac -> "command"
+  | Key.Home -> "Home"
+  | Key.End -> "End"
 
 // Methods on Kbd
 type Kbd =
@@ -148,7 +154,24 @@ type Kbd =
         prop.title (asText(k1) + "+" + "MouseLeftButton")
         prop.children [
           Html.kbd (asSymbol(k1))
-          mouseLeftClickIcon
+          mouseLeftClickIcon()
+        ]
+      ]
+  static member inline keyWithMouseScroll (k1: Key) =
+    Html.span [
+        prop.title (asText(k1) + "+" + "MouseScroll")
+        prop.children [
+          Html.kbd (asSymbol(k1))
+          mouseScrollIcon()
+        ]
+      ]
+  static member inline keysWithMouseLeft (k1: Key, k2: Key) =
+    Html.span [
+        prop.title (asText(k1) + "+" + asText(k2) + "+" + "MouseLeftButton")
+        prop.children [
+          Html.kbd (asSymbol(k1))
+          Html.kbd (asSymbol(k2))
+          mouseLeftClickIcon()
         ]
       ]
   static member inline singleKey (k: Key) =
@@ -166,12 +189,14 @@ type Kbd =
   static member inline alt () = Kbd.singleKey (Key.Alt)
   static member inline alt (k: Key) = Kbd.multiKey (Key.Alt, k)
   static member inline altWithMouseLeft () = Kbd.keyWithMouseLeft (Key.Alt)
+  static member inline altWithMouseScroll () = Kbd.keyWithMouseScroll (Key.Alt)
   static member inline optMac () = Kbd.singleKey (Key.OptMac)
   static member inline optMac (k: Key) = Kbd.multiKey (Key.OptMac, k)
   static member inline cmdMac () = Kbd.singleKey (Key.CmdMac)
   static member inline cmdMac (k: Key) = Kbd.multiKey (Key.CmdMac, k)
   static member inline shift () = Kbd.singleKey (Key.Shift)
   static member inline shift (k: Key) = Kbd.multiKey (Key.Shift, k)
+  static member inline shiftAltWithMouseLeft () = Kbd.keysWithMouseLeft (Key.Shift, Key.Alt)
 
 type HtmlEx =
   static member inline redText (value: string) =

@@ -18,13 +18,23 @@ let keybindingsTable =
             Mui.tableRow [
               Mui.tableCell "Command"
               Mui.tableCell "Keybinding"
-              Mui.tableCell "When"
+              Mui.tableCell ""
             ]
           ]
           Mui.tableBody [
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ Kbd.alt(Key.LeftArrow) ++ "/" ++ Kbd.alt(Key.RightArrow) ++ ())
+              Mui.tableCell (wrapper() ++ Kbd.ctrl(Key.LeftArrow) ++ " / " ++ Kbd.ctrl(Key.RightArrow) ++ ())
               Mui.tableCell (wrapper() ++ "Move one word to the left/right. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
+              Mui.tableCell (wrapper() ++ Kbd.singleKey(Key.Home) ++ " / " ++ Kbd.singleKey(Key.End) ++ ())
+              Mui.tableCell (wrapper() ++ "Move to the beginning/end of the line. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
+              Mui.tableCell (wrapper() ++ Kbd.ctrl(Key.Home) ++ " / " ++ Kbd.ctrl(Key.End) ++ ())
+              Mui.tableCell (wrapper() ++ "Move to the first/last position in the file. Hold down " ++ Kbd.shift() ++ " to select." ++ ())
               Mui.tableCell ""
             ]
             // Mui.tableRow [
@@ -54,7 +64,7 @@ let keybindingsTable =
             ]
             Mui.tableRow [
               Mui.tableCell [Kbd.ctrl(Key.X)]
-              Mui.tableCell "Copy and delete selected text, or the line, if no text is selected, to the clipboard."
+              Mui.tableCell "Copy and delete the selected text, or the line, if no text is selected, to the clipboard."
               Mui.tableCell ""
             ]
             Mui.tableRow [
@@ -68,7 +78,7 @@ let keybindingsTable =
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ Kbd.alt(Key.UpArrow) ++ "/" ++ Kbd.alt(Key.DownArrow) ++ ())
+              Mui.tableCell (wrapper() ++ Kbd.alt(Key.UpArrow) ++ " / " ++ Kbd.alt(Key.DownArrow) ++ ())
               Mui.tableCell "Move the current line up/down."
               Mui.tableCell ""
             ]
@@ -78,8 +88,23 @@ let keybindingsTable =
               Mui.tableCell ""
             ]
             Mui.tableRow [
+              Mui.tableCell [Kbd.ctrl(Key.H)]
+              Mui.tableCell "Open the replace window with the selected text pre-filled."
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
               Mui.tableCell (wrapper() ++ Kbd.altWithMouseLeft() ++ ())
               Mui.tableCell "Add an additional cursor."
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
+              Mui.tableCell (wrapper() ++ Kbd.shiftAltWithMouseLeft() ++ ())
+              Mui.tableCell "Column mode (box) selection."
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
+              Mui.tableCell (wrapper() ++ Kbd.altWithMouseScroll() ++ ())
+              Mui.tableCell "5 times faster scrolling."
               Mui.tableCell ""
             ]
           ]
@@ -87,7 +112,7 @@ let keybindingsTable =
       ]
     ]
   ]
-  // hold down alt while scrolling with the mouse for fast scroll.
+
   // ctrl (or command) -g go to line
   // move selected text via drag-drop. -> not working
 

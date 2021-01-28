@@ -26,6 +26,7 @@ let RootDivComponent (model, dispatch) =
               toolbarElement model dispatch classes
               tabBarElement model dispatch classes
               keybindingsTable
+              Html.br []
             ]
           ]
         ]
