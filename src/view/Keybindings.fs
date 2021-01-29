@@ -68,6 +68,11 @@ let keybindingsTable =
               Mui.tableCell ""
             ]
             Mui.tableRow [
+              Mui.tableCell [Kbd.ctrlShift(Key.K)]
+              Mui.tableCell "Delete line."
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
               Mui.tableCell [Kbd.ctrl(Key.Z)]
               Mui.tableCell "Undo last change."
               Mui.tableCell ""
@@ -105,6 +110,16 @@ let keybindingsTable =
             Mui.tableRow [
               Mui.tableCell (wrapper() ++ Kbd.altWithMouseScroll() ++ ())
               Mui.tableCell "5 times faster scrolling."
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
+              Mui.tableCell (wrapper() ++ Kbd.shiftAlt(Key.F) ++ ())
+              Mui.tableCell "Format document."
+              Mui.tableCell ""
+            ]
+            Mui.tableRow [
+              Mui.tableCell (wrapper() ++ Kbd.ctrl(Key.K) ++ " " ++ Kbd.ctrl(Key.F) ++ ())
+              Mui.tableCell "Format selection."
               Mui.tableCell ""
             ]
           ]

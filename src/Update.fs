@@ -27,8 +27,13 @@ let init () =
   Cmd.none
 
 let getLanguageFromFilename (fileName: string) =
-  if fileName.EndsWith(".js") then JavaScript
+  if fileName.EndsWith(".md") then Markdown
+  elif fileName.EndsWith(".js") then JavaScript
   elif fileName.EndsWith(".ts") then TypeScript
+  elif fileName.EndsWith(".json") then Json
+  elif fileName.EndsWith(".xml") then Xml
+  elif fileName.EndsWith(".yaml") then Yaml
+  elif fileName.EndsWith(".sql") then Sql
   else PlainText
 
 let addItemAtIndex (list: 'a list, index: int, newItem: 'a) =

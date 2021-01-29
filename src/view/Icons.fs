@@ -55,15 +55,16 @@ type private icon =
 
 let mouseLeftClickIcon() = Mdi.icon [
   icon.path Mdi.mouseLeftClickPath
-  icon.size "25px"
-  prop.style [style.margin (-2, 0, -8, 0)]
+  icon.size "32px"
+  prop.style [style.margin (-10, -7, -12)]
   prop.viewBox (0, 0, 1080, 1080)
 ]
 
 let mouseRightClickIcon() = Mdi.icon [
   icon.path Mdi.mouseLeftClickPath
-  icon.size "25px"
-  prop.style [style.margin (-2, 0, -8, 0)]
+  icon.size "32px"
+  icon.flipVertical true
+  prop.style [style.margin (-10, -7, -12)]
   prop.viewBox (0, 0, 1080, 1080)
 ]
 

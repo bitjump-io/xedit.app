@@ -196,6 +196,7 @@ type Kbd =
   static member inline cmdMac (k: Key) = Kbd.multiKey (Key.CmdMac, k)
   static member inline shift () = Kbd.singleKey (Key.Shift)
   static member inline shift (k: Key) = Kbd.multiKey (Key.Shift, k)
+  static member inline shiftAlt (k: Key) = Kbd.multiKey (Key.Shift, Key.Alt, k)
   static member inline shiftAltWithMouseLeft () = Kbd.keysWithMouseLeft (Key.Shift, Key.Alt)
 
 type HtmlEx =

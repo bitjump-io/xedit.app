@@ -7,14 +7,24 @@ open MonacoEditor
 [<StringEnum>]
 type EditorLanguage =
   | [<CompiledName("plaintext")>] PlainText
+  | [<CompiledName("markdown")>] Markdown
   | [<CompiledName("javascript")>] JavaScript
   | [<CompiledName("typescript")>] TypeScript
+  | [<CompiledName("json")>] Json
+  | [<CompiledName("xml")>] Xml
+  | [<CompiledName("yaml")>] Yaml
+  | [<CompiledName("sql")>] Sql
   member x.displayText =
     match x with
     | PlainText -> "Plain text"
+    | Markdown -> "Markdown"
     | JavaScript -> "JavaScript"
     | TypeScript -> "TypeScript"
-  static member all = [PlainText; JavaScript; TypeScript]
+    | Json -> "JSON"
+    | Xml -> "XML"
+    | Yaml -> "YAML"
+    | Sql -> "SQL"
+  static member all = [PlainText; Markdown; JavaScript; TypeScript; Json; Xml; Yaml; Sql]
 
 type Height = | Height of int
 
