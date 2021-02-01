@@ -22,7 +22,7 @@ let inline verticalBar b: ReactElement =
   Mui.svgIcon [
     prop.stroke color.white
     prop.strokeWidth 1
-    prop.viewBox (0, 0, 3, 50)
+    svgIcon.viewBox "0 0 3 50"
     prop.style [style.height 38; style.margin.auto; style.marginLeft 0; style.marginRight 0]
     prop.children [
       Svg.line [
@@ -52,12 +52,13 @@ type private icon =
   static member inline title (value: string) =  Interop.mkAttr "title" value
   static member inline flipHorizontal (value: bool) =  Interop.mkAttr "horizontal" value
   static member inline flipVertical (value: bool) =  Interop.mkAttr "vertical" value
+  static member inline viewBox (value: string) = Interop.mkAttr "viewBox" value
 
 let mouseLeftClickIcon() = Mdi.icon [
   icon.path Mdi.mouseLeftClickPath
   icon.size "32px"
   prop.style [style.margin (-10, -7, -12)]
-  prop.viewBox (0, 0, 1080, 1080)
+  icon.viewBox "0 0 1080 1080"
 ]
 
 let mouseRightClickIcon() = Mdi.icon [
@@ -65,14 +66,14 @@ let mouseRightClickIcon() = Mdi.icon [
   icon.size "32px"
   icon.flipVertical true
   prop.style [style.margin (-10, -7, -12)]
-  prop.viewBox (0, 0, 1080, 1080)
+  icon.viewBox "0 0 1080 1080"
 ]
 
 let mouseScrollIcon() = Mdi.icon [
   icon.path Mdi.mouseScrollPath
   icon.size "20px"
   prop.style [style.margin (0, 0, -6, 0)]
-  prop.viewBox (0, 0, 100, 100)
+  icon.viewBox "0 0 100 100"
 ]
 
 let fontSizeIncreaseIcon() = Mdi.icon [
