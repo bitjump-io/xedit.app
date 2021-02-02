@@ -9,6 +9,21 @@ open Model
 open Msg
 open HtmlEx
 open Literals
+open DomEx
+open JavaScriptHelper
+
+let getOS() =
+  match navigatorObj with
+  | Some n -> 
+    let userAgent = n.userAgent
+    if userAgent.Contains("Windows") then OS.Windows
+    elif userAgent.Contains("Macintosh") then OS.Mac
+    elif (userAgent.Contains("Macintosh") || userAgent.Contains("iPad") || userAgent.Contains("iPhone")) && forceBool(n.maxTouchPoints) && n.maxTouchPoints > 0 then OS.Mac
+    elif userAgent.Contains("Linux") then OS.Linux
+    else OS.Unknown
+  | None -> OS.Unknown
+
+let os = getOS()
 
 // The init function will produce an initial state once the program starts running.  It can take any arguments.
 let init () =
@@ -23,7 +38,9 @@ let init () =
     Debouncer = Debouncer.create()
     DragModel = DragModel.initial
     ThemeKind = ThemeKind.Dark
-  }, 
+    OS = os
+    ShowKeyBindingsFor = os
+  },
   Cmd.none
 
 let getLanguageFromFilename (fileName: string) =
@@ -157,3 +174,5 @@ let update (msg: Msg) (model: Model) =
   | DecreaseFontSize ->
     Option.iter (Editor.decreaseFontSize) monacoEditor
     model, Cmd.none
+  | ShowKeyBindingsForChanged os ->
+    { model with ShowKeyBindingsFor = os }, Cmd.none

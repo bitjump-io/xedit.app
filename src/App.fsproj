@@ -5,6 +5,7 @@
     <ItemGroup>
     <!-- NOTE: THE ORDER IS IMPORTANT -->
         <None Include="index.html" />
+        <Compile Include="helper/JavaScriptHelper.fs" />
         <Compile Include="editor/MonacoEditor.fs" />
         <Compile Include="view/Icons.fs" />
         <Compile Include="helper/FileTools.fs" />

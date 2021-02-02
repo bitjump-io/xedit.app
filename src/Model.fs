@@ -54,6 +54,15 @@ type ThemeKind =
   | Dark
   | Light
 
+[<StringEnum>]
+[<RequireQualifiedAccess>]
+type OS =
+  | [<CompiledName("Unknown")>] Unknown
+  | [<CompiledName("Windows")>] Windows
+  | [<CompiledName("Mac")>] Mac
+  | [<CompiledName("Linux")>] Linux
+  static member all = [Windows; Mac; Linux]
+
 type CssClasses = { RootDiv: string }
 
 // Model holds the current state.
@@ -68,7 +77,9 @@ type Model =
     DevicePixelRatio: float
     Debouncer: Debouncer.State
     DragModel: DragModel
-    ThemeKind: ThemeKind }
+    ThemeKind: ThemeKind
+    OS: OS
+    ShowKeyBindingsFor: OS }
 
  // Not included in Model type because quite large.
 let mutable monacoEditor: IMonacoEditor option = None

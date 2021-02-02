@@ -48,7 +48,7 @@ let darkTheme = Styles.createMuiTheme([
   theme.overrides.muiInputBase.input [
     style.borderRadius 4
     style.position.relative
-    style.backgroundColor "#1e1e1e"
+    style.backgroundColor.transparent
     style.border (1, borderStyle.solid, "#ced4da")
     style.fontSize 16
     style.padding (8, 24, 8, 10)
@@ -80,5 +80,9 @@ let darkTheme = Styles.createMuiTheme([
   ]
   theme.overrides.muiTab.wrapper [
     style.flexDirection.row
+  ]
+  theme.overrides.muiFormControl.root [
+    // undo vertical-align top
+    style.verticalAlign.inheritFromParent
   ]
 ])

@@ -4,7 +4,11 @@ module rec DomEx
 
 open Browser.Types
 
-// See CSSStyleDeclaration in lib.dom.d.ts
+open Fable.Core
+open Fable.Core.JsInterop
+open Browser
+
+// See CSSStyleDeclaration in https://github.com/microsoft/TypeScript/blob/master/lib/lib.dom.d.ts
 type ICSSStyleDeclaration =
   abstract member backgroundColor: string with get, set
 
@@ -24,3 +28,12 @@ type IHTMLElement =
   abstract member style: ICSSStyleDeclaration
   abstract member classList: IDOMTokenList with get
   abstract member className: string with get, set
+
+type INavigator =
+  abstract member userAgent: string with get
+  abstract member maxTouchPoints: int with get
+
+[<Emit("typeof navigator === 'object' ? navigator : null")>]
+let private navigatorExpr: INavigator option = jsNative
+
+let navigatorObj = navigatorExpr

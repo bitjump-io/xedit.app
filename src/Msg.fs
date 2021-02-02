@@ -26,3 +26,4 @@ type Msg =
   | ThemeKind of ThemeKind
   | IncreaseFontSize
   | DecreaseFontSize
+  | ShowKeyBindingsForChanged of OS
