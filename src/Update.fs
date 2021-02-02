@@ -126,7 +126,6 @@ let update (msg: Msg) (model: Model) =
     | None -> ()
     model, Cmd.none
   | TabChanged selectedTabId ->
-    console.log("tab changed " + string selectedTabId)
     let tabModel = model.TabItems.Item(selectedTabId)
     Option.iter (Editor.setTextModelIndex(tabModel.ModelIndex)) monacoEditor
     { model with SelectedTabId = selectedTabId; EditorLanguage = tabModel.Language }, Cmd.none
@@ -155,14 +154,13 @@ let update (msg: Msg) (model: Model) =
     model, msg
   | AddTab newTab ->
     let tabs = model.TabItems @ [newTab]
-    Option.iter (Editor.setTextModelIndex(newTab.ModelIndex)) monacoEditor
-    { model with TabItems = tabs; SelectedTabId = List.length tabs - 1 }, Cmd.none
+    let tabToSelect = List.length tabs - 1 
+    { model with TabItems = tabs }, Cmd.ofMsg (TabChanged tabToSelect)
   | RemoveTab index ->
-    console.log("removeTab", index)
     let tabs = removeItemAtIndex (model.TabItems, index)
-    let cmd = if List.isEmpty tabs then Cmd.ofMsg AddEmptyTab else Cmd.none
     let selectedTabId = if model.SelectedTabId > index || model.SelectedTabId = List.length tabs then model.SelectedTabId - 1 else model.SelectedTabId
-    { model with TabItems = tabs; SelectedTabId = selectedTabId }, cmd
+    let cmd = if List.isEmpty tabs then Cmd.ofMsg AddEmptyTab else Cmd.ofMsg (TabChanged selectedTabId)
+    { model with TabItems = tabs}, cmd
   | OnPromiseError error ->
     console.error("An promise was rejected: ", error)
     model, Cmd.none
