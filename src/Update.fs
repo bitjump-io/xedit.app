@@ -128,6 +128,7 @@ let update (msg: Msg) (model: Model) =
   | TabChanged selectedTabId ->
     let tabModel = model.TabItems.Item(selectedTabId)
     Option.iter (Editor.setTextModelIndex(tabModel.ModelIndex)) monacoEditor
+    Option.iter (Editor.focus) monacoEditor
     { model with SelectedTabId = selectedTabId; EditorLanguage = tabModel.Language }, Cmd.none
   | EditorLanguageChanged editorLanguage ->
     Option.iter (Editor.setLanguage(unbox<string> editorLanguage)) monacoEditor 

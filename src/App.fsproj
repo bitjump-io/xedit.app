@@ -4,8 +4,8 @@
     </PropertyGroup>
     <ItemGroup>
     <!-- NOTE: THE ORDER IS IMPORTANT -->
-        <None Include="index.html" />
         <Compile Include="editor/MonacoEditor.fs" />
+        <None Include="editor/MonacoEditor.ts" />
         <Compile Include="Literals.fs" />
         <Compile Include="Model.fs" />
         <Compile Include="Msg.fs" />
@@ -26,7 +26,9 @@
         <Compile Include="view/Keybindings.fs" />
         <Compile Include="view/RootDiv.fs" />
         <Compile Include="view/App.fs" />
+        <None Include="Main.ts" />
         <Compile Include="Main.fs" />
+        <None Include="index.html" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Fable.Browser.Dom" Version="2.2.0" />

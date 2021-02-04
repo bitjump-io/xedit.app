@@ -156,3 +156,7 @@ export function setLanguage(languageId: string, editor: IMonacoEditor): void {
   let model = monacoEditor.textModels[monacoEditor.currentTextModelIndex];
   monaco.editor.setModelLanguage(model, languageId);
 }
+
+export function focus(editor: IMonacoEditor): void {
+  (editor as MonacoEditor).editor.focus();
+}
