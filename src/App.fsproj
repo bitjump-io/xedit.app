@@ -5,17 +5,17 @@
     <ItemGroup>
     <!-- NOTE: THE ORDER IS IMPORTANT -->
         <None Include="index.html" />
-        <Compile Include="helper/JavaScriptHelper.fs" />
         <Compile Include="editor/MonacoEditor.fs" />
-        <Compile Include="view/Icons.fs" />
+        <Compile Include="Literals.fs" />
+        <Compile Include="Model.fs" />
+        <Compile Include="Msg.fs" />
+        <Compile Include="helper/JavaScriptHelper.fs" />
         <Compile Include="helper/FileTools.fs" />
         <Compile Include="helper/view/MuiTypes.fs" />
         <Compile Include="helper/view/HtmlEx.fs" />
-        <Compile Include="ts2fs/Browser.DomEx.fs" />
-        <Compile Include="view/Literals.fs" />
-        <Compile Include="Model.fs" />
-        <Compile Include="Msg.fs" />
+        <Compile Include="ts2fs/DomEx.fs" />
         <Compile Include="Update.fs" />
+        <Compile Include="view/Icons.fs" />
         <Compile Include="view/MuiEx.fs" />
         <Compile Include="view/Themes.fs" />
         <Compile Include="view/Styles.fs" />

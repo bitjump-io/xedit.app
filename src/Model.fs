@@ -1,5 +1,6 @@
 module Model
 
+open Feliz
 open Thoth.Elmish
 open Fable.Core
 open MonacoEditor
@@ -64,6 +65,8 @@ type OS =
   static member all = [Windows; Mac; Linux]
 
 type CssClasses = { RootDiv: string }
+
+type XIcon = { Element: ReactElement; Name: string}
 
 // Model holds the current state.
 type Model = 

@@ -5,7 +5,8 @@ module HtmlEx
 open Feliz
 open Browser
 open Browser.Types
-open Icons
+open Model
+
 
 [<RequireQualifiedAccess>]
 type Key =
@@ -149,29 +150,21 @@ type Kbd =
           Html.kbd (asSymbol(k3))
         ]
       ]
-  static member inline keyWithMouseLeft (k1: Key) =
+  static member inline keyWithIcon (k1: Key, icon: XIcon) =
     Html.span [
-        prop.title (asText(k1) + "+" + "MouseLeftButton")
+        prop.title (asText(k1) + "+" + icon.Name)
         prop.children [
           Html.kbd (asSymbol(k1))
-          mouseLeftClickIcon()
+          icon.Element
         ]
       ]
-  static member inline keyWithMouseScroll (k1: Key) =
+  static member inline keysWithIcon (k1: Key, k2: Key, icon: XIcon) =
     Html.span [
-        prop.title (asText(k1) + "+" + "MouseScroll")
-        prop.children [
-          Html.kbd (asSymbol(k1))
-          mouseScrollIcon()
-        ]
-      ]
-  static member inline keysWithMouseLeft (k1: Key, k2: Key) =
-    Html.span [
-        prop.title (asText(k1) + "+" + asText(k2) + "+" + "MouseLeftButton")
+        prop.title (asText(k1) + "+" + asText(k2) + "+" + icon.Name)
         prop.children [
           Html.kbd (asSymbol(k1))
           Html.kbd (asSymbol(k2))
-          mouseLeftClickIcon()
+          icon.Element
         ]
       ]
   static member inline singleKey (k: Key) =
@@ -190,10 +183,8 @@ type Kbd =
   static member inline cmdMacOpt (k: Key) = Kbd.multiKey (Key.CmdMac, Key.OptMac, k)
   static member inline alt () = Kbd.singleKey (Key.Alt)
   static member inline alt (k: Key) = Kbd.multiKey (Key.Alt, k)
-  static member inline altWithMouseLeft () = Kbd.keyWithMouseLeft (Key.Alt)
-  static member inline optMacWithMouseLeft () = Kbd.keyWithMouseLeft (Key.OptMac)
-  static member inline altWithMouseScroll () = Kbd.keyWithMouseScroll (Key.Alt)
-  static member inline optMacWithMouseScroll () = Kbd.keyWithMouseScroll (Key.OptMac)
+  static member inline altWithIcon (icon: XIcon) = Kbd.keyWithIcon (Key.Alt, icon)
+  static member inline optMacWithIcon (icon: XIcon) = Kbd.keyWithIcon (Key.OptMac, icon)
   static member inline optMac () = Kbd.singleKey (Key.OptMac)
   static member inline optMac (k: Key) = Kbd.multiKey (Key.OptMac, k)
   static member inline cmdMac () = Kbd.singleKey (Key.CmdMac)
@@ -202,8 +193,8 @@ type Kbd =
   static member inline shift (k: Key) = Kbd.multiKey (Key.Shift, k)
   static member inline shiftAlt (k: Key) = Kbd.multiKey (Key.Shift, Key.Alt, k)
   static member inline shiftOptMac (k: Key) = Kbd.multiKey (Key.Shift, Key.OptMac, k)
-  static member inline shiftAltWithMouseLeft () = Kbd.keysWithMouseLeft (Key.Shift, Key.Alt)
-  static member inline shiftOptMacWithMouseLeft () = Kbd.keysWithMouseLeft (Key.Shift, Key.OptMac)
+  static member inline shiftAltWithIcon (icon: XIcon) = Kbd.keysWithIcon (Key.Shift, Key.Alt, icon)
+  static member inline shiftOptMacWithIcon (icon: XIcon) = Kbd.keysWithIcon (Key.Shift, Key.OptMac, icon)
 
 type HtmlEx =
   static member inline redText (value: string) =

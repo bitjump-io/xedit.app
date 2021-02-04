@@ -3,7 +3,6 @@
 module rec DomEx
 
 open Browser.Types
-
 open Fable.Core
 open Fable.Core.JsInterop
 open Browser

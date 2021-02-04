@@ -6,18 +6,19 @@ open Feliz.MaterialUI
 open MuiTypes
 open Model
 open Msg
+open Icons
 
 // todo keybinding to transform to uppercase, lowercase, titlecase.
 
 // https://material-ui.com/components/tables/#basic-table
 let keybindingsTable (model: Model) (dispatch: Msg -> unit) =
-  let cmdKeyFn = if model.ShowKeyBindingsFor = OS.Mac then Kbd.cmdMac else Kbd.ctrl
-  let cmdShiftFn = if model.ShowKeyBindingsFor = OS.Mac then Kbd.cmdMacShift else Kbd.ctrlShift
-  let altKeyFn = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMac else Kbd.alt
-  let altWithMouseLeftKeyFn = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMacWithMouseLeft else Kbd.altWithMouseLeft
-  let shiftAltWithMouseLeftFn = if model.ShowKeyBindingsFor = OS.Mac then Kbd.shiftOptMacWithMouseLeft else Kbd.shiftAltWithMouseLeft
-  let altWithMouseScrollFn = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMacWithMouseScroll else Kbd.altWithMouseScroll
-  let shiftAltFn = if model.ShowKeyBindingsFor = OS.Mac then Kbd.shiftOptMac else Kbd.shiftAlt
+  let cmdKeyElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.cmdMac else Kbd.ctrl
+  let cmdShiftElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.cmdMacShift else Kbd.ctrlShift
+  let altKeyElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMac else Kbd.alt
+  let altWithMouseLeftKeyElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMacWithIcon(mouseLeftClickIcon()) else Kbd.altWithIcon(mouseLeftClickIcon())
+  let shiftAltWithMouseLeftElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.shiftOptMacWithIcon(mouseLeftClickIcon()) else Kbd.shiftAltWithIcon(mouseLeftClickIcon())
+  let altWithMouseScrollElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMacWithIcon(mouseScrollIcon()) else Kbd.altWithIcon(mouseScrollIcon()) 
+  let shiftAltElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.shiftOptMac else Kbd.shiftAlt
   Mui.tableContainer [
     tableContainer.component' MuiTypes.paper
     tableContainer.children [
@@ -100,47 +101,47 @@ let keybindingsTable (model: Model) (dispatch: Msg -> unit) =
             //   Mui.tableCell ""
             // ]
             Mui.tableRow [
-              Mui.tableCell [cmdKeyFn(Key.A)]
+              Mui.tableCell [cmdKeyElem(Key.A)]
               Mui.tableCell "Select everything."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell [cmdKeyFn(Key.C)]
+              Mui.tableCell [cmdKeyElem(Key.C)]
               Mui.tableCell "Copy selected text, or the line, if no text is selected, to the clipboard."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell [cmdKeyFn(Key.V)]
+              Mui.tableCell [cmdKeyElem(Key.V)]
               Mui.tableCell "Insert the clipboard content at the cursor(s) location(s)."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell [cmdKeyFn(Key.X)]
+              Mui.tableCell [cmdKeyElem(Key.X)]
               Mui.tableCell "Copy and delete the selected text, or the line, if no text is selected, to the clipboard."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell [cmdKeyFn(Key.K)]
+              Mui.tableCell [cmdKeyElem(Key.K)]
               Mui.tableCell "Delete line."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell [cmdKeyFn(Key.Z)]
+              Mui.tableCell [cmdKeyElem(Key.Z)]
               Mui.tableCell "Undo last change."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell [cmdShiftFn(Key.Z)]
+              Mui.tableCell [cmdShiftElem(Key.Z)]
               Mui.tableCell "Redo last change."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ altKeyFn(Key.UpArrow) ++ " / " ++ altKeyFn(Key.DownArrow) ++ ())
+              Mui.tableCell (wrapper() ++ altKeyElem(Key.UpArrow) ++ " / " ++ altKeyElem(Key.DownArrow) ++ ())
               Mui.tableCell "Move the current line up/down."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell [cmdKeyFn(Key.F)]
+              Mui.tableCell [cmdKeyElem(Key.F)]
               Mui.tableCell "Open the find window with the selected text pre-filled."
               Mui.tableCell ""
             ]
@@ -155,27 +156,27 @@ let keybindingsTable (model: Model) (dispatch: Msg -> unit) =
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ altWithMouseLeftKeyFn() ++ ())
+              Mui.tableCell (wrapper() ++ altWithMouseLeftKeyElem ++ ())
               Mui.tableCell "Add an additional cursor."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ shiftAltWithMouseLeftFn() ++ ())
+              Mui.tableCell (wrapper() ++ shiftAltWithMouseLeftElem ++ ())
               Mui.tableCell "Column mode (box) selection."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ altWithMouseScrollFn() ++ ())
+              Mui.tableCell (wrapper() ++ altWithMouseScrollElem ++ ())
               Mui.tableCell "5 times faster scrolling."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ shiftAltFn(Key.F) ++ ())
+              Mui.tableCell (wrapper() ++ shiftAltElem(Key.F) ++ ())
               Mui.tableCell "Format document."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ cmdKeyFn(Key.K) ++ " " ++ cmdKeyFn(Key.F) ++ ())
+              Mui.tableCell (wrapper() ++ cmdKeyElem(Key.K) ++ " " ++ cmdKeyElem(Key.F) ++ ())
               Mui.tableCell "Format selection."
               Mui.tableCell ""
             ]

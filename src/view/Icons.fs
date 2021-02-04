@@ -5,6 +5,7 @@ open Fable.Core
 open Fable.Core.JsInterop
 open Fable.React
 open Feliz.MaterialUI
+open Model
 
 let inline gitHubIcon b : ReactElement = 
   ofImport "default" "@material-ui/icons/GitHub" (keyValueList CaseRules.LowerFirst b) []
@@ -54,27 +55,36 @@ type private icon =
   static member inline flipVertical (value: bool) =  Interop.mkAttr "vertical" value
   static member inline viewBox (value: string) = Interop.mkAttr "viewBox" value
 
-let mouseLeftClickIcon() = Mdi.icon [
-  icon.path Mdi.mouseLeftClickPath
-  icon.size "32px"
-  prop.style [style.margin (-10, -7, -12)]
-  icon.viewBox "0 0 1080 1080"
-]
+let mouseLeftClickIcon(): XIcon = 
+  { Element = 
+      Mdi.icon [
+        icon.path Mdi.mouseLeftClickPath
+        icon.size "32px"
+        prop.style [style.margin (-10, -7, -12)]
+        icon.viewBox "0 0 1080 1080"
+      ];
+    Name = "MouseLeftButton" }
 
-let mouseRightClickIcon() = Mdi.icon [
-  icon.path Mdi.mouseLeftClickPath
-  icon.size "32px"
-  icon.flipVertical true
-  prop.style [style.margin (-10, -7, -12)]
-  icon.viewBox "0 0 1080 1080"
-]
+let mouseRightClickIcon(): XIcon = 
+  { Element = 
+      Mdi.icon [
+        icon.path Mdi.mouseLeftClickPath
+        icon.size "32px"
+        icon.flipVertical true
+        prop.style [style.margin (-10, -7, -12)]
+        icon.viewBox "0 0 1080 1080"
+      ];
+    Name = "MouseRightButton" }
 
-let mouseScrollIcon() = Mdi.icon [
-  icon.path Mdi.mouseScrollPath
-  icon.size "20px"
-  prop.style [style.margin (0, 0, -6, 0)]
-  icon.viewBox "0 0 100 100"
-]
+let mouseScrollIcon(): XIcon = 
+  { Element = 
+      Mdi.icon [
+        icon.path Mdi.mouseScrollPath
+        icon.size "20px"
+        prop.style [style.margin (0, 0, -6, 0)]
+        icon.viewBox "0 0 100 100"
+      ];
+    Name = "MouseScroll" }
 
 let fontSizeIncreaseIcon() = Mdi.icon [
   icon.path Mdi.mdiFormatFontSizeIncreasePath
