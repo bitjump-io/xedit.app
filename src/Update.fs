@@ -82,7 +82,9 @@ let updateDragModel (msg: Msg) (model: DragModel) =
 // The update function will receive the change required by Msg, and the current state. It will produce a new state and potentially new command(s).
 let update (msg: Msg) (model: Model) =
   match msg with
-  | EditorCreated (Height height) -> { model with EditorHeight = height }, Cmd.none
+  | EditorCreated (Height height) -> 
+    Option.iter (Editor.focus) monacoEditor
+    { model with EditorHeight = height }, Cmd.none
   | ToggleWrapText ->
     Option.iter (Editor.setWordWrap(not model.EditorOptions.WrapText)) monacoEditor
     let (editorOptionsModel, editorOptionsCmd) = updateEditorOptions msg model.EditorOptions
