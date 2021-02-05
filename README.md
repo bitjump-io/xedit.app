@@ -14,6 +14,8 @@ See live on https://xedit.app
 
 ## Getting started
 
+Install the latest version of Node.js (the LTS version is not enough) and NET Core SDK. Also git is used to clone this repository.
+
 ```
 git clone https://github.com/bitjump-io/xedit.app.git
 cd xedit.app/
@@ -25,7 +27,7 @@ Open your browser at http://localhost:8080/
 
 For me the debugging works best in google chrome.
 
-The build script assumes you have the redux devtools extension installed in your browser. If not you will likely get errors in the browser console.
+The build script assumes you have the redux devtools extension installed in your browser. If not you will likely get errors in your browser's console.
 
 Open the xedit.app folder in visual studio code and modify the `App.fs` file in the `src` directory. Thanks to hot reloading the changes should be directly visible in the browser.
 
