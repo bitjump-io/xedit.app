@@ -44,7 +44,7 @@ const CONFIG = {
 }
 
 // If we're running the webpack-dev-server, assume we're in development mode
-const isProduction = !process.argv.find(v => v.indexOf('webpack-dev-server') !== -1);
+const isProduction = process.argv.join(' ').indexOf('--env dev') === -1;
 console.log("Bundling for " + (isProduction ? "production" : "development") + "...");
 
 if (isProduction) {
@@ -64,12 +64,12 @@ module.exports = {
   entry: {
       app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.tsEntry)],
     },
-  // Add a hash to the output file name in production
+  // Add a contenthash to the output file name in production
   // to prevent browser caching if code changes
   output: {
     globalObject: 'self',
     path: resolve(CONFIG.outputDir),
-    filename: isProduction ? '[name].[hash].js' : '[name].js'
+    filename: isProduction ? '[name].[contenthash].js' : '[name].js'
   },
   mode: isProduction ? "production" : "development",
   devtool: isProduction ? "source-map" : "cheap-source-map", //"eval-source-map",
@@ -110,7 +110,7 @@ module.exports = {
       new MiniCssExtractPlugin({ filename: 'style.css' }),
       new CopyWebpackPlugin([{ from: resolve(CONFIG.assetsDir) }]),
       new MonacoWebpackPlugin({
-        filename: '[name].worker.[hash].js',
+        filename: '[name].worker.[contenthash].js',
       })
     ])
     : commonPlugins.concat([
@@ -157,12 +157,19 @@ module.exports = {
         test: /\.(sass|scss|css)$/,
         use: [
           isProduction
-            ? MiniCssExtractPlugin.loader
+            ? { 
+                loader: MiniCssExtractPlugin.loader, 
+                options: { 
+                  publicPath: ''
+                }
+              }
             : 'style-loader',
           'css-loader',
           {
             loader: 'sass-loader',
-            options: { implementation: require("sass") }
+            options: { 
+              implementation: require("sass"),
+            }
           }
         ],
       },
