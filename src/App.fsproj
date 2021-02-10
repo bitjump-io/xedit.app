@@ -1,43 +1,46 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
-    </PropertyGroup>
-    <ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
     <!-- NOTE: THE ORDER IS IMPORTANT -->
-        <Compile Include="editor/MonacoEditor.fs" />
-        <None Include="editor/MonacoEditor.ts" />
-        <Compile Include="Literals.fs" />
-        <Compile Include="Model.fs" />
-        <Compile Include="Msg.fs" />
-        <Compile Include="helper/JavaScriptHelper.fs" />
-        <Compile Include="helper/FileTools.fs" />
-        <Compile Include="helper/view/MuiTypes.fs" />
-        <Compile Include="helper/view/HtmlEx.fs" />
-        <Compile Include="ts2fs/DomEx.fs" />
-        <Compile Include="Update.fs" />
-        <Compile Include="view/Icons.fs" />
-        <Compile Include="view/MuiEx.fs" />
-        <Compile Include="view/Themes.fs" />
-        <Compile Include="view/Styles.fs" />
-        <Compile Include="view/Header.fs" />
-        <Compile Include="view/Editor.fs" />
-        <Compile Include="view/Iconbar.fs" />
-        <Compile Include="view/Tabbar.fs" />
-        <Compile Include="view/Keybindings.fs" />
-        <Compile Include="view/RootDiv.fs" />
-        <Compile Include="view/App.fs" />
-        <None Include="Main.ts" />
-        <Compile Include="Main.fs" />
-        <None Include="index.html" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Fable.Browser.Dom" Version="2.2.0" />
-        <PackageReference Include="Fable.Elmish.Debugger" Version="3.2.0" />
-        <PackageReference Include="Fable.Elmish.HMR" Version="4.1.0" />
-        <PackageReference Include="Fable.Elmish.React" Version="3.0.1" />
-        <PackageReference Include="Feliz" Version="1.33.0" />
-        <PackageReference Include="Feliz.ElmishComponents" Version="1.2.0" />
-        <PackageReference Include="Feliz.MaterialUI" Version="1.2.5" />
-        <PackageReference Include="Thoth.Elmish.Debouncer" Version="1.0.0" />
-    </ItemGroup>
+    <Compile Include="editor/MonacoEditor.fs" />
+    <None Include="editor/MonacoEditor.ts" />
+    <Compile Include="Literals.fs" />
+    <Compile Include="Model.fs" />
+    <Compile Include="Msg.fs" />
+    <Compile Include="helper/EventHelper.fs" />
+    <Compile Include="helper/JavaScriptHelper.fs" />
+    <Compile Include="helper/FileTools.fs" />
+    <None Include="helper/LocalDB.ts" />
+    <Compile Include="helper/LocalDB.fs" />
+    <Compile Include="helper/view/MuiTypes.fs" />
+    <Compile Include="helper/view/HtmlEx.fs" />
+    <Compile Include="ts2fs/DomEx.fs" />
+    <Compile Include="Update.fs" />
+    <Compile Include="view/Icons.fs" />
+    <Compile Include="view/MuiEx.fs" />
+    <Compile Include="view/Themes.fs" />
+    <Compile Include="view/Styles.fs" />
+    <Compile Include="view/Header.fs" />
+    <Compile Include="view/Editor.fs" />
+    <Compile Include="view/Iconbar.fs" />
+    <Compile Include="view/Tabbar.fs" />
+    <Compile Include="view/Keybindings.fs" />
+    <Compile Include="view/RootDiv.fs" />
+    <Compile Include="view/App.fs" />
+    <None Include="Main.ts" />
+    <Compile Include="Main.fs" />
+    <None Include="index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fable.Browser.Dom" Version="2.2.0" />
+    <PackageReference Include="Fable.Elmish.Debugger" Version="3.2.0" />
+    <PackageReference Include="Fable.Elmish.HMR" Version="4.1.0" />
+    <PackageReference Include="Fable.Elmish.React" Version="3.0.1" />
+    <PackageReference Include="Feliz" Version="1.33.0" />
+    <PackageReference Include="Feliz.ElmishComponents" Version="1.2.0" />
+    <PackageReference Include="Feliz.MaterialUI" Version="1.2.5" />
+    <PackageReference Include="Thoth.Elmish.Debouncer" Version="1.0.0" />
+  </ItemGroup>
 </Project>

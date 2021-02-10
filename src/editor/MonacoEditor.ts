@@ -27,6 +27,11 @@ export interface IMonacoEditor {
   currentTextModelIndex: number;
 }
 
+// expose a subset of editor.IModelContentChangedEvent
+export interface IModelContentChangedEvent {
+  versionId: number;
+}
+
 // The class wraps the editor instance and may be used for contains custom state.
 // There shall be only one editor for the website which is used by all tabs.
 // Include only instance methods that are needed to verify that the state is consistent.
@@ -71,6 +76,7 @@ class MonacoEditor implements IMonacoEditor {
     if (value == null) {
       throw new Error("Invalid argument: value must not be null.");
     }
+    // See "class TextModel" in https://github.com/microsoft/vscode/blob/master/src/vs/editor/common/model/textModel.ts
     const newModel = monaco.editor.createModel(value, language, null);
     this.textModels.push(newModel);
     return this.textModels.length - 1; // return modelIndex
@@ -159,4 +165,16 @@ export function setLanguage(languageId: string, editor: IMonacoEditor): void {
 
 export function focus(editor: IMonacoEditor): void {
   (editor as MonacoEditor).editor.focus();
+}
+
+export function getValue(modelIndex: number, editor: IMonacoEditor): string {
+  return (editor as MonacoEditor).textModels[modelIndex].getValue(monaco.editor.EndOfLinePreference.TextDefined, true);
+}
+
+export function getLinesContent(modelIndex: number, editor: IMonacoEditor): string[] {
+  return (editor as MonacoEditor).textModels[modelIndex].getLinesContent();
+}
+
+export function onDidChangeContent(modelIndex: number, listener: (e: IModelContentChangedEvent) => void, editor: IMonacoEditor): void {
+  (editor as MonacoEditor).textModels[modelIndex].onDidChangeContent(listener)
 }

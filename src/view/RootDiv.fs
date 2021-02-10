@@ -8,6 +8,7 @@ open Header
 open Iconbar
 open Tabbar
 open Keybindings
+open LocalDB
 
 [<ReactComponent>]
 let RootDivComponent (model, dispatch) =
@@ -27,6 +28,7 @@ let RootDivComponent (model, dispatch) =
               tabBarElement model dispatch classes
               keybindingsTable model dispatch
               Html.br []
+              Html.text (string (DB.saveAsFileSupported ()))
             ]
           ]
         ]

@@ -16,12 +16,18 @@ type IExports =
   abstract decreaseFontSize: editor: IMonacoEditor -> unit
   abstract setLanguage: languageId: string -> editor: IMonacoEditor -> unit
   abstract focus: editor: IMonacoEditor -> unit
+  abstract getValue: modelIndex: int -> editor: IMonacoEditor -> string
+  abstract getLinesContent: modelIndex: int -> editor: IMonacoEditor -> string[]
+  abstract onDidChangeContent: modelIndex: int -> listener: (IModelContentChangedEvent -> unit) -> editor: IMonacoEditor -> unit
 
 [<ImportAll("./MonacoEditor")>]
 let Editor: IExports = jsNative
 
 type IMonacoEditor =
   abstract currentTextModelId: int
+
+type IModelContentChangedEvent =
+  abstract versionId: int
 
 // fsharplint:disable-next-line
 type Dimension = { width: int; height: int }

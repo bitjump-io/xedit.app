@@ -94,6 +94,14 @@ module.exports = {
             return "vendor";
           },
         },
+        // Create one js file for each ts file in src/helper. This is done to easily test the ts file in the test.html file.
+        other: {
+          test: /[\\/]src[\\/]helper[\\/]/,
+          name(module) {
+            let fileName = module.resource.match(/.*[\\/](.+\.ts)/)[1];
+            return fileName;
+          }
+        }
       },
     },
   },

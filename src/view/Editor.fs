@@ -6,6 +6,7 @@ open Browser
 open Model
 open Msg
 open MonacoEditor
+open EventHelper
 
 // The MonacoEditor as a react component.
 [<ReactComponent>]
@@ -19,6 +20,7 @@ let EditorComponent (model, dispatch) =
         let height = 600
         monacoEditor <- Some(Editor.create(x, { width = width; height = height }))
         EditorCreated (Height height) |> dispatch
+        Editor.onDidChangeContent 0 (fun x -> throttle 3000 (fun _ -> console.log("editor changed save content."))) monacoEditor.Value
         monacoEditor
       | None -> None
     React.createDisposable(fun () -> console.error("Should never dispose EditorComponent"))
