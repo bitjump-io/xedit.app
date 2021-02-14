@@ -15,9 +15,11 @@ let toolbarElement model dispatch (classes: CssClasses) =
         model.ShowTooltipControlId = ControlId.WrapText,
         Mui.iconButton [ 
           prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginRight 5; style.borderRadius 5]
-          prop.onClick (fun _ -> dispatch ToggleWrapText)
+          prop.onClick (fun _ -> dispatch ToggleWrapText; (ShowTooltipChanged ControlId.None) |> dispatch)
           prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.WrapText) |> dispatch)
+          prop.onTouchStart (fun _ -> (ShowTooltipChanged ControlId.WrapText) |> dispatch)
           prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+          prop.onTouchEnd (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
           iconButton.children (Icons.wrapTextIcon [ if model.EditorOptions.WrapText then icon.color.primary else () ]) 
         ])
       MuiEx.withTooltip (
@@ -33,8 +35,11 @@ let toolbarElement model dispatch (classes: CssClasses) =
               select.value model.EditorLanguage
               select.onChange (EditorLanguageChanged >> dispatch)
               select.onOpen (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+              select.onClose (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
               prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.EditorLanguage) |> dispatch)
+              prop.onTouchStart (fun _ -> (ShowTooltipChanged ControlId.EditorLanguage) |> dispatch)
               prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+              prop.onTouchEnd (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
               select.input (
                 Mui.inputBase []
               )
@@ -56,9 +61,11 @@ let toolbarElement model dispatch (classes: CssClasses) =
         model.ShowTooltipControlId = ControlId.IncreaseFontSize,
         Mui.iconButton [ 
           prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginLeft 5; style.marginRight 0; style.padding 2; style.borderRadius 5]
-          prop.onClick (fun _ -> dispatch IncreaseFontSize)
+          prop.onClick (fun _ -> dispatch IncreaseFontSize; (ShowTooltipChanged ControlId.None) |> dispatch)
           prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.IncreaseFontSize) |> dispatch)
+          prop.onTouchStart (fun _ -> (ShowTooltipChanged ControlId.IncreaseFontSize) |> dispatch)
           prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+          prop.onTouchEnd (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
           iconButton.children (Icons.fontSizeIncreaseIcon()) 
         ])
       MuiEx.withTooltip (
@@ -66,9 +73,11 @@ let toolbarElement model dispatch (classes: CssClasses) =
         model.ShowTooltipControlId = ControlId.DecreaseFontSize,
         Mui.iconButton [ 
           prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginLeft 0; style.marginRight 5; style.padding 2; style.paddingTop 6; style.borderRadius 5]
-          prop.onClick (fun _ -> dispatch DecreaseFontSize)
+          prop.onClick (fun _ -> dispatch DecreaseFontSize; (ShowTooltipChanged ControlId.None) |> dispatch)
           prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.DecreaseFontSize) |> dispatch)
+          prop.onTouchStart (fun _ -> (ShowTooltipChanged ControlId.DecreaseFontSize) |> dispatch)
           prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+          prop.onTouchEnd (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
           iconButton.children (Icons.fontSizeDecreaseIcon()) 
         ])
     ]
