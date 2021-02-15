@@ -87,6 +87,7 @@ let update (msg: Msg) (model: Model) =
     { model with EditorHeight = height }, Cmd.none
   | ToggleWrapText ->
     Option.iter (Editor.setWordWrap(not model.EditorOptions.WrapText)) monacoEditor
+    Option.iter (Editor.focus) monacoEditor
     let (editorOptionsModel, editorOptionsCmd) = updateEditorOptions msg model.EditorOptions
     { model with EditorOptions = editorOptionsModel }, editorOptionsCmd
   | OpenFilePicker ->
@@ -133,7 +134,7 @@ let update (msg: Msg) (model: Model) =
     Option.iter (Editor.focus) monacoEditor
     { model with SelectedTabId = selectedTabId; EditorLanguage = tabModel.Language }, Cmd.none
   | EditorLanguageChanged editorLanguage ->
-    Option.iter (Editor.setLanguage(unbox<string> editorLanguage)) monacoEditor 
+    Option.iter (Editor.setLanguage(unbox<string> editorLanguage)) monacoEditor
     let tabModel = model.TabItems.Item(model.SelectedTabId)
     let newTabModel = { tabModel with Language = editorLanguage }
     let newTabModels = replaceItemAtIndex(model.TabItems, model.SelectedTabId, newTabModel)
@@ -171,9 +172,11 @@ let update (msg: Msg) (model: Model) =
     { model with ThemeKind = themeKind }, Cmd.none
   | IncreaseFontSize ->
     Option.iter (Editor.increaseFontSize) monacoEditor
+    Option.iter (Editor.focus) monacoEditor
     model, Cmd.none
   | DecreaseFontSize ->
     Option.iter (Editor.decreaseFontSize) monacoEditor
+    Option.iter (Editor.focus) monacoEditor
     model, Cmd.none
   | ShowKeyBindingsForChanged os ->
     { model with ShowKeyBindingsFor = os }, Cmd.none

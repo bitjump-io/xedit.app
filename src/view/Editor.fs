@@ -17,7 +17,8 @@ let EditorComponent (model, dispatch) =
       match divEl.current with
       | Some x -> 
         let width = int x.clientWidth
-        let height = 600
+        let heightTillBottomScreen = int (window.innerHeight - x.getBoundingClientRect().top - 2.0)
+        let height = if heightTillBottomScreen < 300 then 300 else heightTillBottomScreen
         monacoEditor <- Some(Editor.create(x, { width = width; height = height }))
         EditorCreated (Height height) |> dispatch
         Editor.onDidChangeContent 0 (fun x -> throttle 3000 (fun _ -> console.log("editor changed save content."))) monacoEditor.Value

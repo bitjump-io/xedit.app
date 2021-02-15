@@ -56,6 +56,13 @@ class MonacoEditor implements IMonacoEditor {
       //renderWhitespace?: 'none' | 'boundary' | 'selection' | 'trailing' | 'all';
       //renderControlCharacters?: boolean;
       // allow move selections via drag and drop.
+      lineNumbersMinChars: 1,
+      lineDecorationsWidth: 0,
+      suggest: {
+        shareSuggestSelections: false,
+        showWords: false
+      },
+      glyphMargin: true,
       dragAndDrop: true,
       dimension,
       padding: {
@@ -144,6 +151,34 @@ function changeFontSize(editor: IMonacoEditor, change: number): void {
   let fontSize = monacoEditor.getOption(monaco.editor.EditorOption.fontSize);
   monacoEditor.updateOptions({ fontSize: fontSize + change });
 }
+
+        // /**
+        //  * Enable rendering of whitespace.
+        //  * Defaults to none.
+        //  */
+        // renderWhitespace?: 'none' | 'boundary' | 'selection' | 'trailing' | 'all';
+        // /**
+        //  * Enable rendering of control characters.
+        //  * Defaults to false.
+        //  */
+        // renderControlCharacters?: boolean;
+
+        // // /**
+        // //  * Syntax highlighting is copied.
+        // //  */
+        // // copyWithSyntaxHighlighting?: boolean;
+
+        //         /**
+        //  * Enable code folding.
+        //  * Defaults to true.
+        //  */
+        // folding?: boolean;
+
+        //         /**
+        //  * Enable rendering of indent guides.
+        //  * Defaults to true.
+        //  */
+        // renderIndentGuides?: boolean;
 
 // The F# signature is a curried function. It gets compiled to a function call with all arguments passed at once.
 export function increaseFontSize(editor: IMonacoEditor): void {
