@@ -27,7 +27,24 @@ type IMonacoEditor =
   abstract currentTextModelId: int
 
 type IModelContentChangedEvent =
-  abstract versionId: int
+  abstract changes: IModelContentChange[] with get
+  abstract eol: string with get
+  abstract versionId: int with get
+  abstract isUndoing: bool with get
+  abstract isRedoing: bool with get
+  abstract isFlush: bool with get
+
+type IModelContentChange =
+  abstract range: IRange with get
+  abstract rangeOffset: int with get
+  abstract rangeLength: int with get
+  abstract text: string with get
+
+type IRange =
+  abstract startLineNumber: int with get
+  abstract startColumn: int with get
+  abstract endLineNumber: int with get
+  abstract endColumn: int with get
 
 // fsharplint:disable-next-line
 type Dimension = { width: int; height: int }

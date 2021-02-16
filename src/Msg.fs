@@ -3,6 +3,7 @@ module Msg
 open Browser.Types
 open Thoth.Elmish
 open Model
+open MonacoEditor
 
 // Msg is an action that we need to apply to the current state.
 type Msg =
@@ -27,3 +28,4 @@ type Msg =
   | IncreaseFontSize
   | DecreaseFontSize
   | ShowKeyBindingsForChanged of OS
+  | ModelContentChange of IModelContentChange[]

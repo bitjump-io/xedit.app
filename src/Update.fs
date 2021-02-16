@@ -105,7 +105,7 @@ let update (msg: Msg) (model: Model) =
           |> Promise.map (fun text -> 
             let syntaxLang = getLanguageFromFilename(file.name)
             let modelIndex = Editor.addTextModel (text, unbox<string> syntaxLang) monacoEditorVal
-            { Name = file.name; ModelIndex = modelIndex; Language = syntaxLang; UntitledIndex = 0 }
+            { Name = file.name; ModelIndex = modelIndex; Language = syntaxLang; UntitledIndex = 0; ContentSize = text.Length }
           )
         ]
       else
@@ -152,7 +152,7 @@ let update (msg: Msg) (model: Model) =
         let untitledIndex = 
           if List.isEmpty model.TabItems then 1
           else 1 + (model.TabItems |> (List.map (fun x -> x.UntitledIndex) >> List.max))
-        Cmd.ofMsg (AddTab { Name = "Untitled " + string (untitledIndex); ModelIndex = modelIndex; Language = PlainText; UntitledIndex = untitledIndex })
+        Cmd.ofMsg (AddTab { Name = "Untitled " + string (untitledIndex); ModelIndex = modelIndex; Language = PlainText; UntitledIndex = untitledIndex; ContentSize = 0 })
       else
         Cmd.none
     model, msg
@@ -180,3 +180,10 @@ let update (msg: Msg) (model: Model) =
     model, Cmd.none
   | ShowKeyBindingsForChanged os ->
     { model with ShowKeyBindingsFor = os }, Cmd.none
+  | ModelContentChange changes ->
+    let sizeChange = changes |> Seq.sumBy (fun c -> c.text.Length - c.rangeLength)
+    let tabModel = model.TabItems.Item(model.SelectedTabId)
+    let newTabModel = { tabModel with ContentSize = tabModel.ContentSize + sizeChange }
+    let newTabModels = replaceItemAtIndex(model.TabItems, model.SelectedTabId, newTabModel)
+    console.log("New size: ", newTabModel.ContentSize)
+    { model with TabItems = newTabModels }, Cmd.none

@@ -8,11 +8,20 @@
 // @babel/preset-env, babel-loader, sass, sass-loader, css-loader, style-loader, file-loader
 const path = require("path");
 const fs = require('fs');
+const fsp = require('fs').promises;
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+
+// patch monaco editor glyphMarginWidth
+(async function replaceRegexInFile() {
+  const fileToReplaceTextIn = './node_modules/monaco-editor/esm/vs/editor/common/config/editorOptions.js';
+  const data = await fsp.readFile(fileToReplaceTextIn, 'utf8')
+  const result = data.replace(/glyphMarginWidth = lineHeight;/g, 'glyphMarginWidth = 5;');
+  await fsp.writeFile(fileToReplaceTextIn, result, 'utf8');
+})();
 
 const CONFIG = {
   // The tags to include the generated JS and CSS will be automatically injected in the HTML template

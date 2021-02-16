@@ -73,40 +73,44 @@ export function saveAsFileSupported() {
   return hasFileSystemAccessApi || hasFileHandleApi;
 }
 
-export function saveAsFile(filename: string, data: ArrayBuffer) {
+export function saveAsFile(filename: string, data: string): Promise<void> {
   if (hasFileSystemAccessApi) {
-    return saveAsFileChrome(filename, data).catch(e => console.error("promise error", e));
+    return saveAsFileChrome(filename, data);
   }
   else if (hasFileHandleApi) {
-    return openIndexDb().then(db => saveAsFileFirefox(db, filename, data)).catch(e => console.error("promise error", e));
+    return openIndexDb().then(db => saveAsFileFirefox(db, filename, data));
   }
+  return Promise.reject("Browser file storage not supported");
 }
 
-export function getSavedFilesNames() {
+export function getSavedFilesNames(): Promise<string[]> {
   if (hasFileSystemAccessApi) {
-    return getAllFileNamesChrome().catch(e => console.error("promise error", e));
+    return getAllFileNamesChrome();
   }
   else if (hasFileHandleApi) {
-    return openIndexDb().then(db => getAllFileNamesFirefox(db)).catch(e => console.error("promise error", e));
+    return openIndexDb().then(db => getAllFileNamesFirefox(db));
   }
+  return Promise.reject("Browser file storage not supported");
 }
 
-export function readFile(filename: string) {
+export function readFile(filename: string): Promise<string> {
   if (hasFileSystemAccessApi) {
-    return readFileChrome(filename).catch(e => console.error("promise error", e));
+    return readFileChrome(filename);
   }
   else if (hasFileHandleApi) {
-    return openIndexDb().then(db => readFileFirefox(db, filename)).catch(e => console.error("promise error", e));
+    return openIndexDb().then(db => readFileFirefox(db, filename));
   }
+  return Promise.reject("Browser file storage not supported");
 }
 
-export function deleteFile(filename: string) {
+export function deleteFile(filename: string): Promise<void> {
   if (hasFileSystemAccessApi) {
-    return deleteFileChrome(filename).catch(e => console.error("promise error", e));
+    return deleteFileChrome(filename);
   }
   else if (hasFileHandleApi) {
-    return openIndexDb().then(db => deleteFileFirefox(db, filename)).catch(e => console.error("promise error", e));
+    return openIndexDb().then(db => deleteFileFirefox(db, filename));
   }
+  return Promise.reject("Browser file storage not supported");
 }
 
 function openIndexDb() {
@@ -146,7 +150,7 @@ function getAllFileNamesFirefox(db: IDBDatabase) {
 }
 
 function readFileFirefox(db: IDBDatabase, filename: string) {
-  return new Promise<ArrayBuffer>((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     const objectStore = db.transaction(["files"]).objectStore('files');
     const request = objectStore.get(filename);
 
@@ -163,11 +167,11 @@ function readFileFirefox(db: IDBDatabase, filename: string) {
         getmeta.onsuccess = function () {
           const size = this.result.size;
           myFile.location = 0;
-          const reading = myFile.readAsArrayBuffer(size);
+          const reading = myFile.readAsText(size);
 
           reading.onsuccess = function () {
-            // result must be ArrayBuffer because readAsArrayBuffer was called.
-            resolve(this.result as ArrayBuffer);
+            // result must be string because readAsText was called.
+            resolve(this.result as string);
           };
           reading.onerror = function () {
             reject(this.error);
@@ -197,8 +201,8 @@ function deleteFileFirefox(db: IDBDatabase, filename: string) {
   });
 }
 
-function saveAsFileFirefox(db: IDBDatabase, filename: string, data: ArrayBuffer) {
-  return new Promise<IDBValidKey>((resolve, reject) => {
+function saveAsFileFirefox(db: IDBDatabase, filename: string, data: string) {
+  return new Promise<void>((resolve, reject) => {
     const handleReq = (db as IDBDatabaseFirefox).createMutableFile(filename, "plain/text"); //'application/octet-stream'
     
     handleReq.onsuccess = function () {
@@ -216,7 +220,8 @@ function saveAsFileFirefox(db: IDBDatabase, filename: string, data: ArrayBuffer)
           const storeReq = store.put(fileHandle, fileHandle.name);
 
           storeReq.onsuccess = function () {
-            resolve(storeReq.result);
+            //resolve(storeReq.result);
+            resolve();
           };
           storeReq.onerror = function () {
             reject(storeReq.error);
@@ -247,7 +252,7 @@ function saveAsFileFirefox(db: IDBDatabase, filename: string, data: ArrayBuffer)
 //   getFileHandle(): FileSystemFileHandle
 // }
 
-async function saveAsFileChrome(filename: string, content: ArrayBuffer) {
+async function saveAsFileChrome(filename: string, content: string) {
   const rootDir = await navigator.storage.getDirectory();
   const fileHandle = await rootDir.getFileHandle(filename, { create: true });
   const fileStream = await fileHandle.createWritable();
@@ -277,7 +282,7 @@ async function readFileChrome(filename: string) {
   const rootDir = await navigator.storage.getDirectory();
   const fileHandle = await rootDir.getFileHandle(filename, { create: false });
   const file = await fileHandle.getFile();
-  return file.arrayBuffer();
+  return file.text();
 }
 
 async function deleteFileChrome(filename: string) {

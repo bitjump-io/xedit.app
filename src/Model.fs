@@ -38,9 +38,9 @@ type DragModel = { DragenterCount: int; DragleaveCount: int }
     static member initial = { DragenterCount = 0; DragleaveCount = 0 }
     member x.isDragging = x.DragenterCount > x.DragleaveCount
 
-type TabItemModel = { Name: string; ModelIndex: int; Language: EditorLanguage; UntitledIndex: int }
+type TabItemModel = { Name: string; ModelIndex: int; Language: EditorLanguage; UntitledIndex: int; ContentSize: int }
   with
-    static member initial = { Name = "Untitled 1"; ModelIndex = 0; Language = PlainText; UntitledIndex = 1 }
+    static member initial = { Name = "Untitled 1"; ModelIndex = 0; Language = PlainText; UntitledIndex = 1; ContentSize = 0 }
 
 [<RequireQualifiedAccess>]
 type ControlId =

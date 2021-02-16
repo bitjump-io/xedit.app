@@ -21,7 +21,10 @@ let EditorComponent (model, dispatch) =
         let height = if heightTillBottomScreen < 300 then 300 else heightTillBottomScreen
         monacoEditor <- Some(Editor.create(x, { width = width; height = height }))
         EditorCreated (Height height) |> dispatch
-        Editor.onDidChangeContent 0 (fun x -> throttle 3000 (fun _ -> console.log("editor changed save content."))) monacoEditor.Value
+        //Editor.onDidChangeContent 0 (fun x -> throttle 3000 (fun _ -> console.log("editor changed save content."))) monacoEditor.Value
+        //Editor.onDidChangeContent 0 (fun e -> console.log("editor content changed. ", e.versionId, e.changes.[0])) monacoEditor.Value
+        //Editor.onDidChangeContent 0 (fun e -> console.log("size change: ", e.changes |> Seq.sumBy (fun c -> c.text.Length - c.rangeLength))) monacoEditor.Value
+        Editor.onDidChangeContent 0 (fun e -> ModelContentChange e.changes |> dispatch) monacoEditor.Value
         monacoEditor
       | None -> None
     React.createDisposable(fun () -> console.error("Should never dispose EditorComponent"))

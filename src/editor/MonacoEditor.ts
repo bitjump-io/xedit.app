@@ -27,11 +27,6 @@ export interface IMonacoEditor {
   currentTextModelIndex: number;
 }
 
-// expose a subset of editor.IModelContentChangedEvent
-export interface IModelContentChangedEvent {
-  versionId: number;
-}
-
 // The class wraps the editor instance and may be used for contains custom state.
 // There shall be only one editor for the website which is used by all tabs.
 // Include only instance methods that are needed to verify that the state is consistent.
@@ -63,6 +58,7 @@ class MonacoEditor implements IMonacoEditor {
         showWords: false
       },
       glyphMargin: true,
+      //glyphMarginWidth: 5,
       dragAndDrop: true,
       dimension,
       padding: {
@@ -210,6 +206,16 @@ export function getLinesContent(modelIndex: number, editor: IMonacoEditor): stri
   return (editor as MonacoEditor).textModels[modelIndex].getLinesContent();
 }
 
-export function onDidChangeContent(modelIndex: number, listener: (e: IModelContentChangedEvent) => void, editor: IMonacoEditor): void {
+export function onDidChangeContent(modelIndex: number, listener: (e: monaco.editor.IModelContentChangedEvent) => void, editor: IMonacoEditor): void {
   (editor as MonacoEditor).textModels[modelIndex].onDidChangeContent(listener)
 }
+
+// ICodeEditor has getModel(): ITextModel
+// ITextModel has getValue, getValueLength, getLineCount, getEOL methods
+// ITextModel has internal method getTextBuffer(): ITextBuffer;
+// TextModel has _tokens: TokensStore and _tokens2: TokensStore2
+// ITextBuffer is PieceTreeTextBuffer
+// PieceTreeTextBuffer has _pieceTree: PieceTreeBase
+// PieceTreeBase has _buffers!: StringBuffer[]
+// https://github.com/microsoft/vscode/blob/main/src/vs/editor/common/model/pieceTreeTextBuffer/pieceTreeTextBuffer.ts
+// https://github.com/microsoft/vscode/blob/main/src/vs/editor/common/model/tokensStore.ts
