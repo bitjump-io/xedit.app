@@ -5,6 +5,7 @@ open Feliz.MaterialUI
 open MuiEx
 open Model
 open Msg
+open Browser
 
 let toolbarElement model dispatch (classes: CssClasses) =
   Html.div [
@@ -35,7 +36,11 @@ let toolbarElement model dispatch (classes: CssClasses) =
               select.value model.EditorLanguage
               select.onChange (EditorLanguageChanged >> dispatch)
               select.onOpen (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
-              select.onClose (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+              select.onClose (
+                fun _ -> 
+                  let f = fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch
+                  // Defer hiding tooltip because Firefox fires onMouseEnter event after the select element is closed if clicked out of the list.
+                  (window.setTimeout(f, 20)) |> ignore)
               prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.EditorLanguage) |> dispatch)
               prop.onTouchStart (fun _ -> (ShowTooltipChanged ControlId.EditorLanguage) |> dispatch)
               prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
