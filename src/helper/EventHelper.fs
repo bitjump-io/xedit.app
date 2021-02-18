@@ -11,3 +11,6 @@ let throttle =
       for timeoutId in timeoutIds do window.clearInterval(timeoutId)
       callback()
     timeoutIds.Add(window.setTimeout(delayed, timeout))
+
+let setTimeout (handler: unit -> unit) (timeout: int) : unit =
+  window.setTimeout(handler, timeout) |> ignore

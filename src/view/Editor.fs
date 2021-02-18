@@ -6,11 +6,12 @@ open Browser
 open Model
 open Msg
 open MonacoEditor
-open EventHelper
+open Fable.Core.JsInterop
 
 // The MonacoEditor as a react component.
 [<ReactComponent>]
-let EditorComponent (model, dispatch) =
+let EditorComponent (props: {| dispatch: Msg -> unit|}) =
+  let dispatch = props.dispatch
   let divEl = React.useElementRef()
   React.useEffectOnce(fun () ->
     let editor = 
@@ -33,3 +34,5 @@ let EditorComponent (model, dispatch) =
     prop.style [style.display.block; style.width length.auto; style.height length.auto; style.minHeight 100; style.border (1, borderStyle.solid, "#858585")]
     prop.ref divEl
   ]
+
+exportDefault EditorComponent

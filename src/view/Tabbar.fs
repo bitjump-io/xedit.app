@@ -4,8 +4,7 @@ open Feliz
 open Feliz.MaterialUI
 open Model
 open Msg
-open Editor
-open Browser
+open EditorLazy
 
 let tabBarElement model dispatch (classes: CssClasses) =
   Mui.tabContext [
@@ -61,7 +60,7 @@ let tabBarElement model dispatch (classes: CssClasses) =
         ]
       ]
       Html.div [
-        EditorComponent(model, dispatch)
+        EditorComponentLazy(dispatch)
       ]
     ]
   ]

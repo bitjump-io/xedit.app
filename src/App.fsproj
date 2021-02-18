@@ -24,6 +24,7 @@
     <Compile Include="view/Styles.fs" />
     <Compile Include="view/Header.fs" />
     <Compile Include="view/Editor.fs" />
+    <Compile Include="view/EditorLazy.fs" />
     <Compile Include="view/Iconbar.fs" />
     <Compile Include="view/Tabbar.fs" />
     <Compile Include="view/Keybindings.fs" />

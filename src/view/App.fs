@@ -49,7 +49,9 @@ let App (model: Model, dispatch) =
     (fun () -> 
       let editAreaElem = (document.querySelector(".monaco-editor-background") :?> IHTMLElement)
       let marginElem = (document.querySelector(".monaco-editor .margin") :?> IHTMLElement)
-      if model.DragModel.isDragging then
+      if isNull (editAreaElem :> obj) || isNull (marginElem :> obj) then
+        ()
+      elif model.DragModel.isDragging then
         editAreaElem.style.backgroundColor <- "#737373"
         marginElem.style.backgroundColor <- "#737373"
       else
