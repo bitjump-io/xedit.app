@@ -30,3 +30,5 @@ type Msg =
   | ShowKeyBindingsForChanged of OS
   | ModelContentChange of IModelContentChange[]
   | MonacoEditorModulePromiseResolved
+  | EditorDomElementCreated of string
+  | CreateEditor

@@ -33,6 +33,8 @@ let init () =
     EditorHeight = 0
     EditorOptions = EditorOptions.initial
     EditorLanguage = PlainText
+    EditorDomElementId = None
+    IsMonacoEditorModulePromiseResolved = false
     ShowTooltipControlId = ControlId.None
     WindowInnerWidth = window.innerWidth
     DevicePixelRatio = window.devicePixelRatio
@@ -185,10 +187,29 @@ let update (msg: Msg) (model: Model) =
     { model with TabItems = newTabModels }, Cmd.none
   | MonacoEditorModulePromiseResolved ->
     (window :?> IWindow).performance.mark("MonacoEditorModulePromiseResolved")
-    let textAreaElem = document.getElementById("editorElem")
-    let width = int textAreaElem.clientWidth
-    let heightTillBottomScreen = int (window.innerHeight - textAreaElem.getBoundingClientRect().top - 2.0)
+    let cmd = 
+      if model.EditorDomElementId.IsSome
+      then Cmd.ofMsg CreateEditor
+      else Cmd.none
+    { model with IsMonacoEditorModulePromiseResolved = true }, cmd
+  | EditorDomElementCreated id ->
+    let cmd = 
+      if model.IsMonacoEditorModulePromiseResolved
+      then Cmd.ofMsg CreateEditor
+      else Cmd.none
+    { model with EditorDomElementId = Some id }, cmd
+  | CreateEditor ->
+    let editorDomElementId = model.EditorDomElementId.Value
+    let editorElem = getElementValueById editorDomElementId
+    let width = int editorElem.clientWidth
+    let heightTillBottomScreen = int (window.innerHeight - editorElem.getBoundingClientRect().top - 2.0)
     let height = if heightTillBottomScreen < 300 then 300 else heightTillBottomScreen
     importDynamic "../src/editor/MonacoEditor.ts" :> JS.Promise<MonacoEditorTypes.IExports>
-    |> Promise.map (fun p -> monacoEditor <- Some (p.create(textAreaElem, { width = width; height = height }))) |> ignore
+    |> Promise.map (fun p -> 
+      monacoEditor <- Some (p.create(editorElem, { width = width; height = height }))
+      //Editor.onDidChangeContent 0 (fun x -> throttle 3000 (fun _ -> console.log("editor changed save content."))) monacoEditor.Value
+      //Editor.onDidChangeContent 0 (fun e -> console.log("editor content changed. ", e.versionId, e.changes.[0])) monacoEditor.Value
+      //Editor.onDidChangeContent 0 (fun e -> console.log("size change: ", e.changes |> Seq.sumBy (fun c -> c.text.Length - c.rangeLength))) monacoEditor.Value
+      //monacoEditor.Value.onDidChangeContent 0 (fun e -> ModelContentChange e.changes |> dispatch)
+      ) |> ignore
     model, Cmd.none

@@ -75,6 +75,8 @@ type Model =
     EditorHeight: int
     EditorOptions: EditorOptions
     EditorLanguage: EditorLanguage
+    EditorDomElementId: string option
+    IsMonacoEditorModulePromiseResolved: bool
     ShowTooltipControlId: ControlId
     WindowInnerWidth: float
     DevicePixelRatio: float

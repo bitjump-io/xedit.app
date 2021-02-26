@@ -234,5 +234,12 @@ let getElementById id =
   else 
     Some el
 
+let getElementValueById id =
+  let el = document.getElementById(id)
+  if isNull el then 
+    failwith (sprintf "Element %s is null" id)
+  else 
+    el
+
 let click (el: HTMLElement) =
   el.click()
