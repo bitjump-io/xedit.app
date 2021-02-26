@@ -55,7 +55,7 @@ const hasFileSystemAccessApi = !!navigator.storage && !!navigator.storage.getDir
 const hasFileHandleApi = !!window.indexedDB && !!(IDBDatabase.prototype as IDBDatabaseFirefox).createMutableFile;
 
 // ArrayBuffer to String helper.
-function ab2str(buf) {
+function ab2str(buf: ArrayBuffer) {
   return String.fromCharCode.apply(null, new Uint16Array(buf));
 }
 

@@ -3,7 +3,7 @@ module Model
 open Feliz
 open Thoth.Elmish
 open Fable.Core
-open MonacoEditor
+open MonacoEditorTypes
 
 [<StringEnum>]
 type EditorLanguage =

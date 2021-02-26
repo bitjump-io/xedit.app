@@ -4,13 +4,14 @@ open Elmish
 open Browser
 open Thoth.Elmish
 open System
-open MonacoEditor
 open Model
 open Msg
 open HtmlEx
 open Literals
 open DomEx
 open JavaScriptHelper
+open Fable.Core
+open Fable.Core.JsInterop
 
 let getOS() =
   match navigatorObj with
@@ -83,11 +84,10 @@ let updateDragModel (msg: Msg) (model: DragModel) =
 let update (msg: Msg) (model: Model) =
   match msg with
   | EditorCreated (Height height) -> 
-    Option.iter (Editor.focus) monacoEditor
+    monacoEditor |> Option.iter (fun editor -> editor.focus())
     { model with EditorHeight = height }, Cmd.none
   | ToggleWrapText ->
-    Option.iter (Editor.setWordWrap(not model.EditorOptions.WrapText)) monacoEditor
-    Option.iter (Editor.focus) monacoEditor
+    monacoEditor |> Option.iter (fun editor -> editor.setWordWrap(not model.EditorOptions.WrapText); editor.focus())
     let (editorOptionsModel, editorOptionsCmd) = updateEditorOptions msg model.EditorOptions
     { model with EditorOptions = editorOptionsModel }, editorOptionsCmd
   | OpenFilePicker ->
@@ -99,12 +99,11 @@ let update (msg: Msg) (model: Model) =
     let (dragModel, dragCmd) = updateDragModel msg model.DragModel
     let tabItemModelPromises = 
       if monacoEditor.IsSome then
-        let monacoEditorVal = monacoEditor.Value
         [for file in files -> 
           FileTools.readAsText (0, file)
           |> Promise.map (fun text -> 
             let syntaxLang = getLanguageFromFilename(file.name)
-            let modelIndex = Editor.addTextModel (text, unbox<string> syntaxLang) monacoEditorVal
+            let modelIndex = monacoEditor.Value.addTextModel (text, unbox<string> syntaxLang)
             { Name = file.name; ModelIndex = modelIndex; Language = syntaxLang; UntitledIndex = 0; ContentSize = text.Length }
           )
         ]
@@ -125,16 +124,15 @@ let update (msg: Msg) (model: Model) =
     match getElementById(MainContainerElementId) with
     | Some mainContainerElement -> 
       let mainContainerWidth = int mainContainerElement.clientWidth
-      Option.iter (Editor.layout({ width = mainContainerWidth + widthAdjustment; height = model.EditorHeight })) monacoEditor
+      monacoEditor |> Option.iter (fun editor -> editor.layout({ width = mainContainerWidth + widthAdjustment; height = model.EditorHeight }))
     | None -> ()
     model, Cmd.none
   | TabChanged selectedTabId ->
     let tabModel = model.TabItems.Item(selectedTabId)
-    Option.iter (Editor.setTextModelIndex(tabModel.ModelIndex)) monacoEditor
-    Option.iter (Editor.focus) monacoEditor
+    monacoEditor |> Option.iter (fun editor -> editor.setTextModelIndex(tabModel.ModelIndex); editor.focus())
     { model with SelectedTabId = selectedTabId; EditorLanguage = tabModel.Language }, Cmd.none
   | EditorLanguageChanged editorLanguage ->
-    Option.iter (Editor.setLanguage(unbox<string> editorLanguage)) monacoEditor
+    monacoEditor |> Option.iter (fun editor -> editor.setLanguage(unbox<string> editorLanguage))
     let tabModel = model.TabItems.Item(model.SelectedTabId)
     let newTabModel = { tabModel with Language = editorLanguage }
     let newTabModels = replaceItemAtIndex(model.TabItems, model.SelectedTabId, newTabModel)
@@ -148,7 +146,7 @@ let update (msg: Msg) (model: Model) =
   | AddEmptyTab ->
     let msg =
       if monacoEditor.IsSome then
-        let modelIndex = Editor.addTextModel ("", unbox<string> PlainText) monacoEditor.Value
+        let modelIndex = monacoEditor.Value.addTextModel ("", unbox<string> PlainText)
         let untitledIndex = 
           if List.isEmpty model.TabItems then 1
           else 1 + (model.TabItems |> (List.map (fun x -> x.UntitledIndex) >> List.max))
@@ -171,12 +169,10 @@ let update (msg: Msg) (model: Model) =
   | ThemeKind themeKind ->
     { model with ThemeKind = themeKind }, Cmd.none
   | IncreaseFontSize ->
-    Option.iter (Editor.increaseFontSize) monacoEditor
-    Option.iter (Editor.focus) monacoEditor
+    monacoEditor |> Option.iter (fun editor -> editor.increaseFontSize(); editor.focus())
     model, Cmd.none
   | DecreaseFontSize ->
-    Option.iter (Editor.decreaseFontSize) monacoEditor
-    Option.iter (Editor.focus) monacoEditor
+    monacoEditor |> Option.iter (fun editor -> editor.decreaseFontSize(); editor.focus())
     model, Cmd.none
   | ShowKeyBindingsForChanged os ->
     { model with ShowKeyBindingsFor = os }, Cmd.none
@@ -187,3 +183,12 @@ let update (msg: Msg) (model: Model) =
     let newTabModels = replaceItemAtIndex(model.TabItems, model.SelectedTabId, newTabModel)
     console.log("New size: ", newTabModel.ContentSize)
     { model with TabItems = newTabModels }, Cmd.none
+  | MonacoEditorModulePromiseResolved ->
+    (window :?> IWindow).performance.mark("MonacoEditorModulePromiseResolved")
+    let textAreaElem = document.getElementById("editorElem")
+    let width = int textAreaElem.clientWidth
+    let heightTillBottomScreen = int (window.innerHeight - textAreaElem.getBoundingClientRect().top - 2.0)
+    let height = if heightTillBottomScreen < 300 then 300 else heightTillBottomScreen
+    importDynamic "../src/editor/MonacoEditor.ts" :> JS.Promise<MonacoEditorTypes.IExports>
+    |> Promise.map (fun p -> monacoEditor <- Some (p.create(textAreaElem, { width = width; height = height }))) |> ignore
+    model, Cmd.none

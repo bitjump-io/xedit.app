@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "outDir": "./deploy/",
+    "noImplicitAny": true,
+    "module": "ES2020", // First version to support dynamics import.
+    "moduleResolution": "Node",
+    "target": "ES2017", // First version to support await.
+    "allowJs": true
+  },
+  "include": ["src/**/*"],
+}

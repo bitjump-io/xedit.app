@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- NOTE: THE ORDER IS IMPORTANT -->
-    <Compile Include="editor/MonacoEditor.fs" />
+    <Compile Include="editor/MonacoEditorTypes.fs" />
     <None Include="editor/MonacoEditor.ts" />
     <Compile Include="Literals.fs" />
     <Compile Include="Model.fs" />
@@ -24,7 +24,6 @@
     <Compile Include="view/Styles.fs" />
     <Compile Include="view/Header.fs" />
     <Compile Include="view/Editor.fs" />
-    <Compile Include="view/EditorLazy.fs" />
     <Compile Include="view/Iconbar.fs" />
     <Compile Include="view/Tabbar.fs" />
     <Compile Include="view/Keybindings.fs" />
@@ -39,6 +38,7 @@
     <PackageReference Include="Fable.Elmish.Debugger" Version="3.2.0" />
     <PackageReference Include="Fable.Elmish.HMR" Version="4.1.0" />
     <PackageReference Include="Fable.Elmish.React" Version="3.0.1" />
+    <PackageReference Include="Fable.Fetch" Version="2.2.0" />
     <PackageReference Include="Feliz" Version="1.33.0" />
     <PackageReference Include="Feliz.ElmishComponents" Version="1.2.0" />
     <PackageReference Include="Feliz.MaterialUI" Version="1.2.5" />

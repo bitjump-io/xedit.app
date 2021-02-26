@@ -9,6 +9,7 @@ open Model
 open Msg
 open DomEx
 open RootDiv
+open Fable.Core.JsInterop
 
 let addDragAndDropListener (dispatch: Msg -> unit) =
   document.addEventListener("dragover", fun e ->
@@ -42,8 +43,18 @@ let addDragAndDropListener (dispatch: Msg -> unit) =
 [<ReactComponent>]
 let App (model: Model, dispatch) =
   React.useEffectOnce(fun () ->
+    (window :?> IWindow).performance.mark("AppStart")
     window.addEventListener("resize", fun _ -> WindowWidthChaned window.innerWidth |> dispatch)
     addDragAndDropListener dispatch
+
+    importDynamic "../../src/editor/MonacoEditor.ts"
+    |> Promise.map (fun _ -> dispatch MonacoEditorModulePromiseResolved) |> ignore
+
+    window.addEventListener("load", fun _ -> 
+      console.log("domContentLoaded", (window :?> IWindow).performance.timing.domContentLoadedEventStart - (window :?> IWindow).performance.timing.navigationStart)
+      console.log("domComplete", (window :?> IWindow).performance.timing.domComplete - (window :?> IWindow).performance.timing.navigationStart)
+      (window :?> IWindow).performance.getEntriesByType("mark") |> Seq.iter (fun entry -> console.log(entry.name, entry.startTime))
+    )
   )
   React.useEffect(
     (fun () -> 

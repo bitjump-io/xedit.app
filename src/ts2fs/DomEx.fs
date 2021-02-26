@@ -7,6 +7,49 @@ open Fable.Core
 open Fable.Core.JsInterop
 open Browser
 
+type IWindow =
+  abstract member performance: IPerformance
+
+type IPerformance =
+  abstract getEntries: unit -> IPerformanceEntry[]
+  abstract getEntriesByName: name: string -> IPerformanceEntry[] // second optional arg is type
+  abstract getEntriesByType: type': string -> IPerformanceEntry[]
+  abstract mark: markName: string -> unit
+  abstract measure: measureName: string * startMark: string * endMark: string -> unit
+  abstract now: unit -> float
+  abstract timing: IPerformanceTiming
+
+type IPerformanceEntry =
+  abstract duration: float with get
+  abstract entryType: string with get
+  abstract name: string with get
+  abstract startTime: float with get
+  abstract toJSON: unit -> string // any
+
+type IPerformanceTiming =
+  abstract connectEnd: float with get
+  abstract connectStart: float with get
+  abstract domComplete:  float with get
+  abstract domContentLoadedEventEnd: float with get
+  abstract domContentLoadedEventStart: float with get
+  abstract domInteractive: float with get
+  abstract domLoading: float with get
+  abstract domainLookupEnd: float with get
+  abstract domainLookupStart: float with get
+  abstract fetchStart: float with get
+  abstract loadEventEnd: float with get
+  abstract loadEventStart: float with get
+  abstract navigationStart: float with get
+  abstract redirectEnd: float with get
+  abstract redirectStart: float with get
+  abstract requestStart: float with get
+  abstract responseEnd: float with get
+  abstract responseStart: float with get
+  abstract secureConnectionStart: float with get
+  abstract unloadEventEnd: float with get
+  abstract unloadEventStart: float with get
+  abstract toJSON: unit -> string // any
+
 // See CSSStyleDeclaration in https://github.com/microsoft/TypeScript/blob/master/lib/lib.dom.d.ts
 type ICSSStyleDeclaration =
   abstract member backgroundColor: string with get, set
