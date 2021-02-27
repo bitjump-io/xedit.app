@@ -9,9 +9,11 @@ open Msg
 open HtmlEx
 open Literals
 open DomEx
+open Browser.Dom
 open JavaScriptHelper
 open Fable.Core
 open Fable.Core.JsInterop
+open EventHelper
 
 let getOS() =
   match navigatorObj with
@@ -86,8 +88,16 @@ let updateDragModel (msg: Msg) (model: DragModel) =
 let update (msg: Msg) (model: Model) =
   match msg with
   | EditorCreated (Height height) -> 
-    monacoEditor |> Option.iter (fun editor -> editor.focus())
-    { model with EditorHeight = height }, Cmd.none
+    let cmd =
+      if monacoEditor.IsSome then
+        monacoEditor.Value.focus()
+
+        let sub dispatch =
+          monacoEditor.Value.onDidChangeContent 0 (fun e -> ModelContentChange e.changes |> dispatch)
+        Cmd.ofSub sub
+      else
+        Cmd.none
+    { model with EditorHeight = height }, cmd
   | ToggleWrapText ->
     monacoEditor |> Option.iter (fun editor -> editor.setWordWrap(not model.EditorOptions.WrapText); editor.focus())
     let (editorOptionsModel, editorOptionsCmd) = updateEditorOptions msg model.EditorOptions
@@ -102,12 +112,12 @@ let update (msg: Msg) (model: Model) =
     let tabItemModelPromises = 
       if monacoEditor.IsSome then
         [for file in files -> 
-          FileTools.readAsText (0, file)
-          |> Promise.map (fun text -> 
+          promise {
+            let! text = FileTools.readAsText (0, file)
             let syntaxLang = getLanguageFromFilename(file.name)
             let modelIndex = monacoEditor.Value.addTextModel (text, unbox<string> syntaxLang)
-            { Name = file.name; ModelIndex = modelIndex; Language = syntaxLang; UntitledIndex = 0; ContentSize = text.Length }
-          )
+            return { Name = file.name; ModelIndex = modelIndex; Language = syntaxLang; UntitledIndex = 0; ContentSize = text.Length }
+          }
         ]
       else
         []
@@ -204,12 +214,9 @@ let update (msg: Msg) (model: Model) =
     let width = int editorElem.clientWidth
     let heightTillBottomScreen = int (window.innerHeight - editorElem.getBoundingClientRect().top - 2.0)
     let height = if heightTillBottomScreen < 300 then 300 else heightTillBottomScreen
-    importDynamic "../src/editor/MonacoEditor.ts" :> JS.Promise<MonacoEditorTypes.IExports>
-    |> Promise.map (fun p -> 
-      monacoEditor <- Some (p.create(editorElem, { width = width; height = height }))
-      //Editor.onDidChangeContent 0 (fun x -> throttle 3000 (fun _ -> console.log("editor changed save content."))) monacoEditor.Value
-      //Editor.onDidChangeContent 0 (fun e -> console.log("editor content changed. ", e.versionId, e.changes.[0])) monacoEditor.Value
-      //Editor.onDidChangeContent 0 (fun e -> console.log("size change: ", e.changes |> Seq.sumBy (fun c -> c.text.Length - c.rangeLength))) monacoEditor.Value
-      //monacoEditor.Value.onDidChangeContent 0 (fun e -> ModelContentChange e.changes |> dispatch)
-      ) |> ignore
-    model, Cmd.none
+    let editorCreatedPromise = 
+      importDynamic "../src/editor/MonacoEditor.ts" :> JS.Promise<MonacoEditorTypes.IExports>
+      |> Promise.map (fun p -> 
+        monacoEditor <- Some (p.create(editorElem, { width = width; height = height }))
+        Height height)
+    model, Cmd.OfPromise.either (fun _ -> editorCreatedPromise) () EditorCreated OnPromiseError

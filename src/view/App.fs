@@ -48,7 +48,9 @@ let App (model: Model, dispatch) =
     addDragAndDropListener dispatch
 
     importDynamic "../../src/editor/MonacoEditor.ts"
-    |> Promise.map (fun _ -> dispatch MonacoEditorModulePromiseResolved) |> ignore
+    |> Promise.map (fun _ -> dispatch MonacoEditorModulePromiseResolved)
+    |> Promise.catch(fun ex -> console.log(ex))
+    |> ignore
 
     window.addEventListener("load", fun _ -> 
       console.log("domContentLoaded", (window :?> IWindow).performance.timing.domContentLoadedEventStart - (window :?> IWindow).performance.timing.navigationStart)
