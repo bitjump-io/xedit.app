@@ -3,7 +3,6 @@ const fsp = require('fs').promises;
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 // patch monaco editor glyphMarginWidth
@@ -156,12 +155,6 @@ module.exports = async () => {
     },
     plugins: isProduction ?
       commonPlugins.concat([
-        new MiniCssExtractPlugin({ 
-          chunkFilename: (pathData) => {
-            return pathData.chunk.name != null && pathData.chunk.name.indexOf('monaco-editor') != -1 ? '[name].css' : 'chunk-[id].[contenthash].css';
-          },
-          filename: isProduction ? '[name].[contenthash].css' : '[name].css'
-        }),
         new CopyWebpackPlugin(
         { 
           patterns: [
@@ -210,14 +203,8 @@ module.exports = async () => {
         {
           test: /\.(sass|scss|css)$/,
           use: [
-            isProduction
-              ? { 
-                  loader: MiniCssExtractPlugin.loader, 
-                  options: { 
-                    publicPath: '',
-                  }
-                }
-              : 'style-loader',
+            // Using MiniCssExtractPlugin resulted in missing css eg. ".monaco-editor .overflow-guard" and only minor size reduction of monaco-editor-v0.22.3.[contenthash].js
+            'style-loader',
             'css-loader',
             {
               loader: 'sass-loader',
