@@ -2,6 +2,7 @@ name = "workers-site"
 account_id = ""
 type = "webpack"
 workers_dev = true
+webpack_config = "workers-site/webpack.development.js"
 
 [site]
 bucket = "./deploy"
@@ -11,3 +12,4 @@ entry-point = "workers-site"
 vars = { ENVIRONMENT = "production" }
 zone_id = ""
 route = "*xedit.app/*"
+webpack_config = "workers-site/webpack.production.js"

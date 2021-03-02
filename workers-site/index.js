@@ -48,7 +48,7 @@ async function handleEvent(event) {
         bypassCache: false, // do not bypass Cloudflare's cache
       }
     }
-    let response = response = await getAssetFromKV(event, options);
+    let response = await getAssetFromKV(event, options);
     const isRoot = /^(\/|\/index\.html)$/i.test(url.pathname);
 
     // Cache everything but the root document.
