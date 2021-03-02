@@ -41,7 +41,21 @@ async function handleEvent(event) {
         bypassCache: true,
       }
     }
-    return await getAssetFromKV(event, options)
+    else {
+      options.cacheControl = {
+        browserTTL: 30 * 60 * 60 * 24, // 30 days
+        edgeTTL: 30 * 60 * 60 * 24, // 30 days
+        bypassCache: false, // do not bypass Cloudflare's cache
+      }
+    }
+    let response = response = await getAssetFromKV(event, options);
+    const isRoot = /^(\/|\/index\.html)$/i.test(url.pathname);
+
+    // Cache everything but the root document.
+    if (!isRoot) {
+      response.headers.set("Cache-Control", "public, max-age=2592000, immutable");
+    }
+    return response;
   } catch (e) {
     // if an error is thrown try to serve the asset at 404.html
     if (!DEBUG) {
