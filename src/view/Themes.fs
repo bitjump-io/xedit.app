@@ -45,6 +45,9 @@ let darkTheme = Styles.createMuiTheme([
   theme.overrides.muiInputBase.root [
     style.color "inherit"
   ]
+  theme.overrides.muiButton.outlined [
+    style.border (1, borderStyle.solid, "#ced4da")
+  ]
   theme.overrides.muiInputBase.input [
     style.borderRadius 4
     style.position.relative
