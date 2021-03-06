@@ -212,8 +212,7 @@ let update (msg: Msg) (model: Model) =
     let editorDomElementId = model.EditorDomElementId.Value
     let editorElem = getElementValueById editorDomElementId
     let width = int editorElem.clientWidth
-    let heightTillBottomScreen = int (window.innerHeight - editorElem.getBoundingClientRect().top - 2.0)
-    let height = if heightTillBottomScreen < 300 then 300 else heightTillBottomScreen
+    let height = int editorElem.clientHeight
     let editorCreatedPromise = 
       importDynamic "../src/editor/MonacoEditor.ts" :> JS.Promise<MonacoEditorTypes.IExports>
       |> Promise.map (fun p -> 
