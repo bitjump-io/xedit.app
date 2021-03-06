@@ -28,7 +28,6 @@ const CONFIG = {
   // See https://github.com/jantimon/html-webpack-plugin
   indexHtmlTemplate: "./src/index.html",
   fsharpEntry: "./build/Main.fs.js",
-  tsEntry: "./src/Main.ts",
   outputDir: "./deploy",
   assetsDir: "./public",
   devServerPort: 8080,
@@ -75,7 +74,7 @@ module.exports = async () => {
 
   return {
     entry: {
-        app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.tsEntry)],
+        app: [resolve(CONFIG.fsharpEntry)],
         "monaco-editor": [resolve("./src/editor/MonacoEditor.ts")]
     },
     experiments: {
