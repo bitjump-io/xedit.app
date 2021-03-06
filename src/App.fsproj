@@ -34,6 +34,7 @@
     <None Include="index.html" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="5.0.1"/>
     <PackageReference Include="Fable.Browser.Dom" Version="2.2.0" />
     <PackageReference Include="Fable.Elmish.Debugger" Version="3.2.0" />
     <PackageReference Include="Fable.Elmish.HMR" Version="4.1.0" />
