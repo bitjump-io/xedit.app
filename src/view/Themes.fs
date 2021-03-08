@@ -43,7 +43,7 @@ let darkTheme = Styles.createMuiTheme([
     style.color "inherit"
   ]
   theme.overrides.muiInputBase.root [
-    style.color "inherit"
+    style.color (color.rgb(133, 133, 133))
   ]
   theme.overrides.muiInputBase.input [
     style.borderRadius 4
