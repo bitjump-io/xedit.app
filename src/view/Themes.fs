@@ -46,13 +46,13 @@ let darkTheme = Styles.createMuiTheme([
     style.color "inherit"
   ]
   theme.overrides.muiButton.outlined [
-    style.border (1, borderStyle.solid, "#ced4da")
+    //style.border (1, borderStyle.solid, "#ced4da")
   ]
   theme.overrides.muiInputBase.input [
     style.borderRadius 4
     style.position.relative
     style.backgroundColor.transparent
-    style.border (1, borderStyle.solid, "#ced4da")
+    style.borderStyle borderStyle.none
     style.fontSize 16
     style.padding (8, 24, 8, 10)
     Interop.mkStyle "transition" (defaultTheme.transitions.create ([|"border-color"; "box-shadow"|]))
@@ -80,6 +80,10 @@ let darkTheme = Styles.createMuiTheme([
   theme.overrides.muiSelect.root [
     // No uppercase.
     style.textTransform.none
+  ]
+  theme.overrides.muiSelect.icon [
+    // Show in parent color instead of white.
+    style.color "inherit"
   ]
   theme.overrides.muiTab.wrapper [
     style.flexDirection.row

@@ -78,7 +78,6 @@ let updateEditorOptions (msg: Msg) (model: EditorOptions) =
 // Helpers to update nested state.
 let updateDragModel (msg: Msg) (model: DragModel) =
   match msg with
-  | FilesAdded _ -> DragModel.initial, Cmd.none
   | OnDrop _ -> DragModel.initial, Cmd.none
   | OnDragenter _ -> { model with DragenterCount = model.DragenterCount + 1 }, Cmd.none
   | OnDragleave _ -> { model with DragleaveCount = model.DragleaveCount + 1 }, Cmd.none
@@ -102,11 +101,6 @@ let update (msg: Msg) (model: Model) =
     monacoEditor |> Option.iter (fun editor -> editor.setWordWrap(not model.EditorOptions.WrapText); editor.focus())
     let (editorOptionsModel, editorOptionsCmd) = updateEditorOptions msg model.EditorOptions
     { model with EditorOptions = editorOptionsModel }, editorOptionsCmd
-  | OpenFilePicker ->
-    // The default html file picker is not nice so it is displayed invisible and the click event is triggered here.
-    Option.iter click (getElementById(FileInputElementId))
-    model, Cmd.none
-  | FilesAdded files
   | OnDrop files ->
     let (dragModel, dragCmd) = updateDragModel msg model.DragModel
     let tabItemModelPromises = 

@@ -14,7 +14,7 @@ See live on https://xedit.app
 
 ## Getting started
 
-Install the latest version of Node.js (the LTS version is not enough) and NET Core SDK. Also git is used to clone this repository.
+Install the latest version of Node.js (the LTS version is not enough) and .NET Core SDK. Also git is used to clone this repository.
 
 ```
 git clone https://github.com/bitjump-io/xedit.app.git

@@ -9,8 +9,6 @@ open MonacoEditorTypes
 type Msg =
   | EditorCreated of Height
   | ToggleWrapText
-  | OpenFilePicker
-  | FilesAdded of File list
   | WindowWidthChaned of float // Triggered each time a window.resize event is emitted.
   | DebouncerSelfMsg of Debouncer.SelfMessage<Msg> // This is the message used by the Debouncer.
   | EndOfWindowWidthChaned // Message we want to debounce.
