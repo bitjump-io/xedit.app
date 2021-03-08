@@ -55,6 +55,7 @@ type ICSSStyleDeclaration =
   abstract member backgroundColor: string with get, set
   abstract member width: string with get, set
   abstract member height: string with get, set
+  abstract member opacity: string with get, set
 
 type IDOMTokenList =
   abstract member length: int with get

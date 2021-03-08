@@ -14,6 +14,6 @@ let headerElement model dispatch =
         HtmlEx.redText "x"
         Html.text "edit.app - where "
         HtmlEx.redText "x"
-        Html.text " = every file"
+        Html.text " = any file"
       ]
     ]

@@ -45,26 +45,24 @@ let darkTheme = Styles.createMuiTheme([
   theme.overrides.muiInputBase.root [
     style.color "inherit"
   ]
-  theme.overrides.muiButton.outlined [
-    //style.border (1, borderStyle.solid, "#ced4da")
-  ]
   theme.overrides.muiInputBase.input [
     style.borderRadius 4
     style.position.relative
-    style.backgroundColor.transparent
+    //style.backgroundColor.transparent
+    style.color (color.rgb(133, 133, 133))
     style.borderStyle borderStyle.none
     style.fontSize 16
     style.padding (8, 24, 8, 10)
-    Interop.mkStyle "transition" (defaultTheme.transitions.create ([|"border-color"; "box-shadow"|]))
+    //Interop.mkStyle "transition" (defaultTheme.transitions.create ([|"border-color"; "box-shadow"|]))
     // Nested style definition.
-    style.custom ("&:focus", [style.borderRadius 4; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
+    //style.custom ("&:focus", [style.borderRadius 4; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
   ]
   theme.overrides.muiInputBase.inputMarginDense [
     // Clear 3px paddingTop.
     style.paddingTop length.auto
   ]
   theme.overrides.muiIconButton.root [
-    style.color "rgb(133,133,133)"
+    style.color (color.rgb(133, 133, 133))
   ]
   theme.overrides.muiTabs.root [
     //style.display.flex
@@ -82,8 +80,8 @@ let darkTheme = Styles.createMuiTheme([
     style.textTransform.none
   ]
   theme.overrides.muiSelect.icon [
-    // Show in parent color instead of white.
-    style.color "inherit"
+    // Instead of white show specific color.
+    style.color (color.rgb(133, 133, 133))
   ]
   theme.overrides.muiTab.wrapper [
     style.flexDirection.row

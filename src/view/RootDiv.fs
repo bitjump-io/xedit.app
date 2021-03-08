@@ -9,6 +9,7 @@ open Iconbar
 open Tabbar
 open Keybindings
 open LocalDB
+open MuiEx
 
 [<ReactComponent>]
 let RootDivComponent (model, dispatch) =
@@ -29,6 +30,12 @@ let RootDivComponent (model, dispatch) =
               keybindingsTable model dispatch
               Html.br []
               Html.text (string (DB.saveAsFileSupported ()))
+              // The button is only included because without it the css class .MuiButton-root and .MuiButton-root:hover are not generated.
+              // However these are also needed for the select element.
+              Mui.button [
+                button.variant.outlined
+                prop.style [style.visibility.collapse]
+              ]
             ]
           ]
         ]

@@ -10,6 +10,8 @@ open Msg
 open DomEx
 open RootDiv
 open Fable.Core.JsInterop
+open HtmlEx
+open EventHelper
 
 let addDragAndDropListener (dispatch: Msg -> unit) =
   document.addEventListener("dragover", fun e ->
@@ -56,6 +58,8 @@ let App (model: Model, dispatch) =
       console.log("domContentLoaded", (window :?> IWindow).performance.timing.domContentLoadedEventStart - (window :?> IWindow).performance.timing.navigationStart)
       console.log("domComplete", (window :?> IWindow).performance.timing.domComplete - (window :?> IWindow).performance.timing.navigationStart)
       (window :?> IWindow).performance.getEntriesByType("mark") |> Seq.iter (fun entry -> console.log(entry.name, entry.startTime))
+      
+      setTimeout (fun _ -> (getElementValueById("underneathEditorElem") :?> IHTMLElement).style.opacity <- "0") 3000
     )
   )
   React.useEffect(

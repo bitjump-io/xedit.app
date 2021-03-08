@@ -39,8 +39,18 @@ class MonacoEditor implements IMonacoEditor {
     this.textModels = [];
     this._createInitialModel();
 
+    editor.defineTheme("custom-vs-dark", {
+      base: "vs-dark", // can also be vs-dark or hc-black
+      inherit: true, // can also be false to completely replace the builtin rules
+      rules: [],
+      colors: {
+        // transparent background.
+        "editor.background": '#00000000',
+      }
+    });
+
     this.codeEditor = editor.create(elem, {
-      theme: "vs-dark",
+      theme: "custom-vs-dark",
       scrollbar: {
         verticalScrollbarSize: 25,
         horizontalScrollbarSize: 25
