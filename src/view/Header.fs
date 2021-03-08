@@ -17,4 +17,3 @@ let headerElement model dispatch =
         Html.text " = every file"
       ]
     ]
-  ]
