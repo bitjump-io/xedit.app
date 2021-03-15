@@ -35,24 +35,29 @@ async function handleEvent(event) {
   // options.mapRequestToAsset = handlePrefix(/^\/docs/)
 
   try {
-    if (DEBUG) {
-      // customize caching
-      options.cacheControl = {
-        bypassCache: true,
-      }
-    }
-    else {
-      options.cacheControl = {
-        browserTTL: 30 * 60 * 60 * 24, // 30 days
-        edgeTTL: 30 * 60 * 60 * 24, // 30 days
-        bypassCache: false, // do not bypass Cloudflare's cache
-      }
-    }
+    // if (DEBUG) {
+    //   // customize caching
+
+    // // We set our own Cache-Control header.
+    // options.cacheControl = {
+    //   bypassCache: true,
+    // }
+    // }
+    // else {
+    //   options.cacheControl = {
+    //     browserTTL: 30 * 60 * 60 * 24, // 30 days
+    //     edgeTTL: 30 * 60 * 60 * 24, // 30 days
+    //     bypassCache: false, // do not bypass Cloudflare's cache
+    //   }
+    // }
     let response = await getAssetFromKV(event, options);
     const isRoot = /^(\/|\/index\.html)$/i.test(url.pathname);
 
-    // Cache everything but the root document.
-    if (!isRoot) {
+    // Cache everything but always revalidate the root document.
+    if (isRoot) {
+      response.headers.set("Cache-Control", "must-revalidate");
+    }
+    else {
       response.headers.set("Cache-Control", "public, max-age=2592000, immutable");
     }
     return response;
