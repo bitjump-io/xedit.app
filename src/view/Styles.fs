@@ -36,6 +36,17 @@ let useStyles: unit -> CssClasses = Styles.makeStyles(fun styles theme ->
           style.borderRadius 3
           //StyleEx.boxShadowInset (0, -1, 0, 0, "rgba(68,68,68,.6)")
           ])
+    ];
+    TabButton = styles.create [
+      style.custom ("borderRadius", "0 !important")
+      style.custom ("borderRight", "1px solid rgb(35, 35, 35) !important")
+      style.custom ("padding", "6px 0 6px 16px !important")
+    ];
+    ShowCloseBtnOnHover = styles.create [
+      style.custom ("&:hover div", styles.create [style.color (color.rgb(133, 133, 133) + " !important")] )
+    ];
+    CloseBtn = styles.create [
+      style.custom ("color", "transparent !important")
     ]
   }
 )
