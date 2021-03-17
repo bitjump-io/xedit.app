@@ -39,14 +39,19 @@ let useStyles: unit -> CssClasses = Styles.makeStyles(fun styles theme ->
     ];
     TabButton = styles.create [
       style.custom ("borderRadius", "0 !important")
-      style.custom ("borderRight", "1px solid rgb(35, 35, 35) !important")
       style.custom ("padding", "6px 0 6px 16px !important")
+    ];
+    BorderLeft = styles.create [
+      style.custom ("borderLeft", "1px solid rgb(35, 35, 35) !important")
     ];
     ShowCloseBtnOnHover = styles.create [
       style.custom ("&:hover div", styles.create [style.color (color.rgb(133, 133, 133) + " !important")] )
     ];
     CloseBtn = styles.create [
       style.custom ("color", "transparent !important")
+    ];
+    TabsScrollButton = styles.create [
+      style.custom ("min-width", "0 !important")
     ]
   }
 )

@@ -22,12 +22,13 @@ let tabBarElement model dispatch (classes: CssClasses) =
                 tabs.onChange (TabChanged >> dispatch)
                 tabs.indicatorColor.primary
                 tabs.textColor.primary
+                tabs.classes.scrollButtons ("MuiButton-root " + classes.TabsScrollButton)
                 tabs.children (
                   model.TabItems
                   |> List.mapi (fun tabIndex t ->
                     Mui.tab [
-                      // Add class for hover effect.
-                      tab.classes.root ("MuiButton-root " + classes.ShowCloseBtnOnHover + " " + classes.TabButton)
+                      // Add class that highlights the tab on hover, class that shows the close button on hover and other.
+                      tab.classes.root ("MuiButton-root " + classes.ShowCloseBtnOnHover + " " + classes.TabButton + (if tabIndex = 0 then "" else " " + classes.BorderLeft))
                       tab.disableRipple true
                       tab.label [
                         Html.span [
