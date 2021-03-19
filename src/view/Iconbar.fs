@@ -9,7 +9,6 @@ open EventHelper
 
 let toolbarElement model dispatch (classes: CssClasses) =
   Html.div [
-    prop.style [style.marginTop 14]
     prop.children [
       MuiEx.withTooltip (
         "Wrap text",

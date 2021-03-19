@@ -17,7 +17,7 @@ let useStyles: unit -> CssClasses = Styles.makeStyles(fun styles theme ->
   {
     RootDiv = styles.create [
       style.backgroundColor theme.palette.background.paper
-      style.padding 10
+      style.marginTop 4
       style.fontSize 16
       style.color "#ccc"
       style.height (length.percent 100)

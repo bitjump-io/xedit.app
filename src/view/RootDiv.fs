@@ -4,7 +4,6 @@ open Feliz
 open Feliz.MaterialUI
 open Literals
 open Styles
-open Header
 open Iconbar
 open Tabbar
 open Keybindings
@@ -24,7 +23,6 @@ let RootDivComponent (model, dispatch) =
         prop.children [
           Html.div [
             prop.children [
-              headerElement model dispatch
               toolbarElement model dispatch classes
               tabBarElement model dispatch classes
               keybindingsTable model dispatch
