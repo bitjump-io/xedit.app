@@ -16,7 +16,7 @@ let keybindingsTable (model: Model) (dispatch: Msg -> unit) =
   let cmdShiftElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.cmdMacShift else Kbd.ctrlShift
   let altKeyElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMac else Kbd.alt
   let altWithMouseLeftKeyElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMacWithIcon(mouseLeftClickIcon()) else Kbd.altWithIcon(mouseLeftClickIcon())
-  let shiftAltWithMouseLeftElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.shiftOptMacWithIcon(mouseLeftClickIcon()) else Kbd.shiftAltWithIcon(mouseLeftClickIcon())
+  let cmdWithMouseLeftElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.cmdMacWithIcon(mouseLeftClickIcon()) else Kbd.ctrlWithIcon(mouseLeftClickIcon())
   let altWithMouseScrollElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMacWithIcon(mouseScrollIcon()) else Kbd.altWithIcon(mouseScrollIcon()) 
   let shiftAltElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.shiftOptMac else Kbd.shiftAlt
   Mui.tableContainer [
@@ -156,13 +156,13 @@ let keybindingsTable (model: Model) (dispatch: Msg -> unit) =
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ altWithMouseLeftKeyElem ++ ())
+              Mui.tableCell (wrapper() ++ cmdWithMouseLeftElem ++ ())
               Mui.tableCell "Add an additional cursor."
               Mui.tableCell ""
             ]
             Mui.tableRow [
-              Mui.tableCell (wrapper() ++ shiftAltWithMouseLeftElem ++ ())
-              Mui.tableCell "Column mode (box) selection."
+              Mui.tableCell (wrapper() ++ altWithMouseLeftKeyElem ++ ())
+              Mui.tableCell "Column mode (box) selection with additional cursors."
               Mui.tableCell ""
             ]
             Mui.tableRow [

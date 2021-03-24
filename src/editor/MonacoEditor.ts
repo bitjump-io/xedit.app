@@ -75,6 +75,7 @@ class MonacoEditor implements IMonacoEditor {
         top: 5,
         bottom: 5
       },
+      multiCursorModifier: "ctrlCmd",
       model: this.textModels[0]
     });
   }

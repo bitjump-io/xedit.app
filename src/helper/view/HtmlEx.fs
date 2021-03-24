@@ -194,7 +194,8 @@ type Kbd =
   static member inline shiftAlt (k: Key) = Kbd.multiKey (Key.Shift, Key.Alt, k)
   static member inline shiftOptMac (k: Key) = Kbd.multiKey (Key.Shift, Key.OptMac, k)
   static member inline shiftAltWithIcon (icon: XIcon) = Kbd.keysWithIcon (Key.Shift, Key.Alt, icon)
-  static member inline shiftOptMacWithIcon (icon: XIcon) = Kbd.keysWithIcon (Key.Shift, Key.OptMac, icon)
+  static member inline cmdMacWithIcon (icon: XIcon) = Kbd.keyWithIcon (Key.CmdMac, icon)
+  static member inline ctrlWithIcon (icon: XIcon) = Kbd.keyWithIcon (Key.Ctrl, icon)
 
 type HtmlEx =
   static member inline redText (value: string) =
