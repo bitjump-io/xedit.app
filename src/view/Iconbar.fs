@@ -10,6 +10,8 @@ open Fable.Core
 open Fable.React
 open Feliz
 open Browser.Types
+open MUI
+open Icons
 
 
 let inline toJsx (el: ReactElement) : JSX.Element = unbox el
@@ -85,33 +87,29 @@ let toolbarElement model dispatch =
           //]
         //]
       //)
-      UiEx.TooltipX (
+      UiEx.withTooltip (
         "Increase Font Size",
         model.ShowTooltipControlId = ControlId.IncreaseFontSize,
-        UiEx.IconButtonX () |> toReact
-        // [ 
-        //   prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginLeft 5; style.marginRight 0; style.padding 2; style.borderRadius 5]
-        //   prop.onClick (fun _ -> dispatch IncreaseFontSize; (ShowTooltipChanged ControlId.None) |> dispatch)
-        //   prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.IncreaseFontSize) |> dispatch)
-        //   prop.onTouchStart (fun _ -> (ShowTooltipChanged ControlId.IncreaseFontSize) |> dispatch)
-        //   prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
-        //   prop.onTouchEnd (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
-        //   iconButton.children (Icons.fontSizeIncreaseIcon()) 
-        // ]
-        ) |> toReact
-      UiEx.TooltipX (
+        Mui.iconButton [ 
+          prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginLeft 5; style.marginRight 0; style.padding 2; style.borderRadius 5]
+          prop.onClick (fun _ -> dispatch IncreaseFontSize; (ShowTooltipChanged ControlId.None) |> dispatch)
+          prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.IncreaseFontSize) |> dispatch)
+          prop.onTouchStart (fun _ -> (ShowTooltipChanged ControlId.IncreaseFontSize) |> dispatch)
+          prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+          prop.onTouchEnd (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+          iconButton.children (Icons.fontSizeIncreaseIcon()) 
+        ])
+      UiEx.withTooltip (
         "Decrease Font Size",
         model.ShowTooltipControlId = ControlId.DecreaseFontSize,
-        UiEx.IconButtonX () |> toReact
-        // [ 
-        //   prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginLeft 0; style.marginRight 5; style.padding 2; style.paddingTop 6; style.borderRadius 5]
-        //   prop.onClick (fun _ -> dispatch DecreaseFontSize; (ShowTooltipChanged ControlId.None) |> dispatch)
-        //   prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.DecreaseFontSize) |> dispatch)
-        //   prop.onTouchStart (fun _ -> (ShowTooltipChanged ControlId.DecreaseFontSize) |> dispatch)
-        //   prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
-        //   prop.onTouchEnd (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
-        //   iconButton.children (Icons.fontSizeDecreaseIcon()) 
-        // ]
-        ) |> toReact
+        Mui.iconButton [ 
+          prop.style [style.verticalAlign.bottom; style.height 38; style.width 38; style.marginLeft 0; style.marginRight 5; style.padding 2; style.paddingTop 6; style.borderRadius 5]
+          prop.onClick (fun _ -> dispatch DecreaseFontSize; (ShowTooltipChanged ControlId.None) |> dispatch)
+          prop.onMouseEnter (fun _ -> (ShowTooltipChanged ControlId.DecreaseFontSize) |> dispatch)
+          prop.onTouchStart (fun _ -> (ShowTooltipChanged ControlId.DecreaseFontSize) |> dispatch)
+          prop.onMouseLeave (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+          prop.onTouchEnd (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
+          iconButton.children (Icons.fontSizeDecreaseIcon()) 
+        ])
     ]
   ]

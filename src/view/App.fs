@@ -119,7 +119,7 @@ let App () =
     let program () =
         Program.mkProgram Update.init Update.update (fun _ _ -> ())
         #if DEBUG
-        //|> Program.withDebuggerAt (Debugger.Remote("localhost",5173))
+        |> Program.withDebuggerAt (Debugger.Remote("localhost",5173))
         #endif
 
     let model, dispatch = React.useElmish (program, ()) //(init, update, arg = 2)
