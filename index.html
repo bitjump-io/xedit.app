@@ -23,7 +23,13 @@
         <!-- Generated JavaScript code will be injected here. -->
     </head>
     <body>
-        <div id="feliz-app"></div>
+        <div id="app-container"></div>
+        <script>
+            if (global === undefined) {
+              var global = window;
+            }
+          </script>
+        <script type="module" src="./dist/Main.jsx"></script>
 
         <script>
             performance.mark("BodyEnd");

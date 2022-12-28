@@ -2,10 +2,10 @@ module HtmlEx
 
 // Extensions for both the Feliz.Html module and other DOM helper functions.
 
-open Feliz
 open Browser
 open Browser.Types
 open Model
+open Feliz
 
 
 [<RequireQualifiedAccess>]

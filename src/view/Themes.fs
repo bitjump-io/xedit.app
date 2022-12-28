@@ -1,10 +1,5 @@
 module Themes
 open Feliz
-open Feliz.MaterialUI
-
-// Themes documentation links
-// - https://cmeeren.github.io/Feliz.MaterialUI/#usage/themes
-// - https://material-ui.com/customization/theming/
 
 let defaultTheme = Styles.createMuiTheme()
 

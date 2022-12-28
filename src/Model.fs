@@ -4,6 +4,7 @@ open Feliz
 open Thoth.Elmish
 open Fable.Core
 open MonacoEditorTypes
+open Fable.React
 
 [<StringEnum>]
 type EditorLanguage =
@@ -63,8 +64,6 @@ type OS =
   | [<CompiledName("Mac")>] Mac
   | [<CompiledName("Linux")>] Linux
   static member all = [Windows; Mac; Linux]
-
-type CssClasses = { RootDiv: string; TabButton: string; BorderLeft: string; ShowCloseBtnOnHover: string; CloseBtn: string; TabsScrollButton: string }
 
 type XIcon = { Element: ReactElement; Name: string}
 

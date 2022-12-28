@@ -1,12 +1,14 @@
 module App
 
+open Fable.Core
+open Browser
+open Fable.React
 open Feliz
 open Elmish
-open Feliz.MaterialUI
-open Browser
 open Browser.Types
 open Model
 open Msg
+open System
 open DomEx
 open RootDiv
 open Fable.Core.JsInterop
@@ -42,8 +44,8 @@ let addDragAndDropListener (dispatch: Msg -> unit) =
   )
 
 // Website markup definition.
-[<ReactComponent>]
-let App (model: Model, dispatch) =
+[<JSX.Component>]
+let App2 (model: Model, dispatch) =
   React.useEffectOnce(fun () ->
     (window :?> IWindow).performance.mark("AppStart")
     window.addEventListener("resize", fun _ -> WindowWidthChaned window.innerWidth |> dispatch)
@@ -85,12 +87,47 @@ let App (model: Model, dispatch) =
       (document.body :?> IHTMLElement).style.backgroundColor <- newColor
     ),
     [|model.ThemeKind :> obj|])
-  Mui.themeProvider [
-    themeProvider.theme Themes.darkTheme
-    themeProvider.children [
-      RootDivComponent(model, dispatch)
-    ]
-  ]
+  RootDivComponent(model, dispatch)
+  // Html.div [
+  //   Html.text "piep"
+  // ]
+  // Mui.themeProvider [
+  //   themeProvider.theme Themes.darkTheme
+  //   themeProvider.children [
+  //     RootDivComponent(model, dispatch)
+  //   ]
+  // ]
 
-let render (state: Model) (dispatch: Msg -> unit) =
-  App (state, dispatch)
+// let render (state: Model) (dispatch: Msg -> unit) =
+//   App (state, dispatch)
+
+// module private Elmish =
+//     type State = int
+
+//     let init (count: int) = 1, Cmd.none
+
+//     let update (msg: Msg) (state: State) =
+//       2, Cmd.none
+
+open Elmish
+open Elmish.React
+open Elmish.Debug
+open Elmish.HMR
+
+[<JSX.Component>]
+let App () =
+    let program () =
+        Program.mkProgram Update.init Update.update (fun _ _ -> ())
+        #if DEBUG
+        //|> Program.withDebuggerAt (Debugger.Remote("localhost",5173))
+        #endif
+
+    let model, dispatch = React.useElmish (program, ()) //(init, update, arg = 2)
+
+    JSX.jsx
+        $"""
+    <div className="container mx-5 mt-5 is-max-desktop">
+        <p className="title">My Todos</p>
+        {App2 (model, dispatch)}
+    </div>
+    """

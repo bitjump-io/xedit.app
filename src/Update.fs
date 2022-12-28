@@ -93,7 +93,7 @@ let update (msg: Msg) (model: Model) =
 
         let sub dispatch =
           monacoEditor.Value.onDidChangeContent 0 (fun e -> ModelContentChange e.changes |> dispatch)
-        Cmd.ofSub sub
+        Cmd.ofEffect sub
       else
         Cmd.none
     { model with EditorHeight = height }, cmd

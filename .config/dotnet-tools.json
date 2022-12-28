@@ -3,19 +3,19 @@
   "isRoot": true,
   "tools": {
     "fable": {
-      "version": "3.1.5",
+      "version": "4.0.0-theta-011",
       "commands": [
         "fable"
       ]
     },
     "femto": {
-      "version": "0.9.0",
+      "version": "0.16.0",
       "commands": [
         "femto"
       ]
     },
     "dotnet-outdated-tool": {
-      "version": "3.1.1",
+      "version": "4.3.2",
       "commands": [
         "dotnet-outdated"
       ]
