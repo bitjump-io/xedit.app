@@ -1,6 +1,5 @@
 module Editor
 
-open Fable.Core
 open Feliz
 open Elmish
 open Browser
@@ -10,7 +9,7 @@ open Fable.Core.JsInterop
 open DomEx
 
 // The MonacoEditor as a react component.
-[<JSX.Component>]
+[<ReactComponent>]
 let EditorComponent (props: {| dispatch: Msg -> unit|}) =
   let dispatch = props.dispatch
   let divEl = React.useElementRef()

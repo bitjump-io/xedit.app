@@ -2,6 +2,7 @@ module Keybindings
 
 open HtmlEx
 open Feliz
+open Feliz.MaterialUI
 open MuiTypes
 open Model
 open Msg
