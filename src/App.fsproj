@@ -19,10 +19,6 @@
     <Compile Include="helper/view/HtmlEx.fs" />
     <Compile Include="ts2fs/DomEx.fs" />
     <Compile Include="Update.fs" />
-    <Compile Include="view/MUI/Bindings.fs" />
-    <Compile Include="view/MUI/Props.fs" />
-    <Compile Include="view/MUI/Flatten.fs" />
-    <Compile Include="view/MUI/Mui.fs" />
     <Compile Include="view/Icons.fs" />
     <Compile Include="view/UiEx.fs" />
     <!-- <Compile Include="view/Themes.fs" /> -->

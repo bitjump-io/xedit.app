@@ -1,19 +1,10 @@
 module UiEx
 
-// open Fable.Core
-// open Feliz
-// open Browser.Types
-// open Feliz.prop
-// open Feliz.svg
-// open Fable.React
-
-open System.ComponentModel
 open Fable.Core
-open Fable.Core.JsInterop
-open Fable.React
 open Feliz
 open Browser.Types
-open MUI
+open Feliz.prop
+open Feliz.svg
 
 [<JSX.Component>]
 let TooltipX (title: string, showTooltip: bool, element: ReactElement) =
@@ -42,33 +33,42 @@ let ButtonOutlined (value: string, onClick: MouseEvent -> unit) =
       </Button>
     """
 
+
+// [<JSX.Component>]
+// let IconButtonX () =
+
+//   JSX.jsx
+//     $"""
+//       import {{ IconButton }} from "@mui/material"
+//       import {{ WrapTextIcon }} from "@mui/icons-material/WrapText"
+
+//       <IconButton>
+//         <WrapTextIcon />
+//       </IconButton>
+//     """
+
 [<JSX.Component>]
-let IconButtonX (style: #IStyleAttribute list, children: #ReactElement list, onClick: MouseEvent -> unit, onMouseEnter: MouseEvent -> unit, onMouseLeave: MouseEvent -> unit, onTouchStart: TouchEvent -> unit, onTouchEnd: TouchEvent -> unit) =
+let IconButtonX () =
 
   JSX.jsx
     $"""
-      import {{ IconButton }} from "@mui/material"
-      import {{ WrapText as WrapTextIcon }} from "@mui/icons-material"
-
-
-      <IconButton style={style} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-        {children}
-      </IconButton>
+      <span>hello iconbuttonx</span>
     """
 
-type UiEx =
-  static member inline buttonOutlined (value: string, ?onClick: MouseEvent -> unit) =
-    Mui.button [
-      button.variant.outlined
-      button.children value
-      if onClick.IsSome
-        then prop.onClick onClick.Value
-    ]
-  static member inline withTooltip (title: string, showTooltip: bool, element: ReactElement) =
-    Mui.tooltip [
-      MUI.tooltip.title title
-      tooltip.arrow true
-      tooltip.placement.bottom
-      tooltip.children(element)
-      tooltip.open' showTooltip
-    ]
+// Material UI extensions.
+// type UiEx =
+//   static member inline buttonOutlined (value: string, ?onClick: MouseEvent -> unit) =
+//     Mui.button [
+//       button.variant.outlined
+//       button.children value
+//       if onClick.IsSome
+//         then prop.onClick onClick.Value
+//     ]
+  // static member inline withTooltip (title: string, showTooltip: bool, element: ReactElement) =
+  //   Mui.tooltip [
+  //     tooltip.title title
+  //     tooltip.arrow true
+  //     tooltip.placement.bottom
+  //     tooltip.children(element)
+  //     tooltip.open' showTooltip
+  //   ]
