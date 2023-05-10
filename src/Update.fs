@@ -34,7 +34,7 @@ let init () =
     TabItems = [TabItemModel.initial]
     EditorHeight = 0
     EditorOptions = EditorOptions.initial
-    EditorLanguage = PlainText
+    EditorLanguage = Some(PlainText)
     EditorDomElementId = None
     IsMonacoEditorModulePromiseResolved = false
     ShowTooltipControlId = ControlId.None
@@ -136,13 +136,13 @@ let update (msg: Msg) (model: Model) =
   | TabChanged selectedTabId ->
     let tabModel = model.TabItems.Item(selectedTabId)
     monacoEditor |> Option.iter (fun editor -> editor.setTextModelIndex(tabModel.ModelIndex); editor.focus())
-    { model with SelectedTabId = selectedTabId; EditorLanguage = tabModel.Language }, Cmd.none
+    { model with SelectedTabId = selectedTabId; EditorLanguage = Some(tabModel.Language) }, Cmd.none
   | EditorLanguageChanged editorLanguage ->
     monacoEditor |> Option.iter (fun editor -> editor.setLanguage(unbox<string> editorLanguage))
     let tabModel = model.TabItems.Item(model.SelectedTabId)
     let newTabModel = { tabModel with Language = editorLanguage }
     let newTabModels = replaceItemAtIndex(model.TabItems, model.SelectedTabId, newTabModel)
-    { model with EditorLanguage = editorLanguage; TabItems = newTabModels }, Cmd.none
+    { model with EditorLanguage = Some(editorLanguage); TabItems = newTabModels }, Cmd.none
   | ShowTooltipChanged controlId ->
     { model with ShowTooltipControlId = controlId }, Cmd.none
   | OnDragenter

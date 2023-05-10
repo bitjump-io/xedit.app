@@ -30,9 +30,8 @@ let toolbarElement model dispatch (classes: CssClasses) =
           formControl.variant.outlined
           formControl.children [
             Mui.select [
-              // Add class for hover effect.
-              select.classes.select "MuiButton-root"
-              select.value model.EditorLanguage.displayText
+              prop.classes [classes.ButtonHover]
+              select.value model.EditorLanguage
               select.onChange (EditorLanguageChanged >> dispatch)
               select.onOpen (fun _ -> (ShowTooltipChanged ControlId.None) |> dispatch)
               select.onClose (fun _ -> 

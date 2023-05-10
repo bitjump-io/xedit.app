@@ -45,9 +45,9 @@ let darkTheme = Styles.createTheme([
     // Remove fontSize because it overwrites MuiInputBase-input fontSize.
     style.custom ("fontSize", "unset")
   ]
-  theme.styleOverrides.muiInputBase.root [
-    style.color (color.rgb(133, 133, 133))
-  ]
+  // theme.styleOverrides.muiInputBase.root [
+  //   style.color (color.rgb(255, 133, 0))
+  // ]
   theme.styleOverrides.muiInputBase.input [
     style.borderRadius 4
     style.position.relative
@@ -56,11 +56,8 @@ let darkTheme = Styles.createTheme([
     style.borderStyle borderStyle.none
     style.fontSize 16
     style.padding (8, 24, 8, 10)
-    //Interop.mkStyle "transition" (defaultTheme.transitions.create ([|"border-color"; "box-shadow"|]))
-    // Nested style definition.
-    //style.custom ("&:focus", [style.borderRadius 4; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
-  ]
-  // theme.styleOverrides.muiInputBase.inputMarginDense [
+   ]
+   // theme.styleOverrides.muiInputBase.inputMarginDense [
   //   // Clear 3px paddingTop.
   //   style.paddingTop length.auto
   // ]

@@ -11,7 +11,7 @@ open Icons
 // todo keybinding to transform to uppercase, lowercase, titlecase.
 
 // https://material-ui.com/components/tables/#basic-table
-let keybindingsTable (model: Model) (dispatch: Msg -> unit) =
+let keybindingsTable (model: Model) (dispatch: Msg -> unit) (classes: CssClasses) =
   let cmdKeyElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.cmdMac else Kbd.ctrl
   let cmdShiftElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.cmdMacShift else Kbd.ctrlShift
   let altKeyElem = if model.ShowKeyBindingsFor = OS.Mac then Kbd.optMac else Kbd.alt
@@ -36,7 +36,7 @@ let keybindingsTable (model: Model) (dispatch: Msg -> unit) =
                     formControl.variant.outlined
                     formControl.children [
                       Mui.select [
-                        select.classes.select "MuiButton-root"
+                        prop.classes [classes.ButtonHover]
                         select.input (
                           Mui.inputBase []
                         )

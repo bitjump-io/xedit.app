@@ -59,6 +59,9 @@ let useStyles: unit -> CssClasses = Styles.makeStyles(fun styles theme ->
       style.paddingRight 2
       style.display.inlineFlex
       style.fontSize 16
-    ]
+    ];
+    ButtonHover = styles.create [
+      style.custom ("&:hover div", styles.create [style.backgroundColor (color.rgba(255, 255, 255, 0.08) + " !important")] )
+    ];
   }
 )

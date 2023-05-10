@@ -25,7 +25,7 @@ let RootDivComponent (model, dispatch) =
             prop.children [
               toolbarElement model dispatch classes
               tabBarElement model dispatch classes
-              keybindingsTable model dispatch
+              keybindingsTable model dispatch classes
               Html.br []
               Html.text (string (DB.saveAsFileSupported ()))
               // The button is only included because without it the css class .MuiButton-root and .MuiButton-root:hover are not generated.

@@ -64,7 +64,7 @@ type OS =
   | [<CompiledName("Linux")>] Linux
   static member all = [Windows; Mac; Linux]
 
-type CssClasses = { RootDiv: string; TabButton: string; BorderLeft: string; ShowCloseBtnOnHover: string; CloseBtn: string; TabsScrollButton: string; TabWrapper: string }
+type CssClasses = { RootDiv: string; TabButton: string; BorderLeft: string; ShowCloseBtnOnHover: string; CloseBtn: string; TabsScrollButton: string; TabWrapper: string; ButtonHover: string }
 
 type XIcon = { Element: ReactElement; Name: string}
 
@@ -74,7 +74,7 @@ type Model =
     TabItems: TabItemModel list
     EditorHeight: int
     EditorOptions: EditorOptions
-    EditorLanguage: EditorLanguage
+    EditorLanguage: EditorLanguage option
     EditorDomElementId: string option
     IsMonacoEditorModulePromiseResolved: bool
     ShowTooltipControlId: ControlId
