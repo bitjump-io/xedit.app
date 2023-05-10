@@ -64,7 +64,7 @@ type OS =
   | [<CompiledName("Linux")>] Linux
   static member all = [Windows; Mac; Linux]
 
-type CssClasses = { RootDiv: string; TabButton: string; BorderLeft: string; ShowCloseBtnOnHover: string; CloseBtn: string; TabsScrollButton: string }
+type CssClasses = { RootDiv: string; TabButton: string; BorderLeft: string; ShowCloseBtnOnHover: string; CloseBtn: string; TabsScrollButton: string; TabWrapper: string }
 
 type XIcon = { Element: ReactElement; Name: string}
 

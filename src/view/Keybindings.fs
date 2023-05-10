@@ -36,7 +36,7 @@ let keybindingsTable (model: Model) (dispatch: Msg -> unit) =
                     formControl.variant.outlined
                     formControl.children [
                       Mui.select [
-                        select.classes.root "MuiButton-root"
+                        select.classes.select "MuiButton-root"
                         select.input (
                           Mui.inputBase []
                         )

@@ -13,14 +13,18 @@
         "update-all-dependencies": "dotnet tool update fable && dotnet tool update femto && dotnet tool update dotnet-outdated-tool && dotnet outdated --upgrade ./src && node ./node_modules/npm-check/bin/cli.js --update-all"
     },
     "dependencies": {
-        "@material-ui/core": "^4.11.3",
-        "@material-ui/icons": "^4.11.2",
-        "@material-ui/lab": "^4.0.0-alpha.57",
-        "@mdi/js": "^5.9.55",
-        "@mdi/react": "^1.4.0",
+        "@emotion/react": "^11.11.0",
+        "@emotion/styled": "^11.11.0",
+        "@mdi/js": "^7.2.96",
+        "@mdi/react": "^1.6.1",
+        "@mui/icons-material": "^5.11.16",
+        "@mui/lab": "^5.0.0-alpha.129",
+        "@mui/material": "^5.12.3",
+        "@mui/styles": "^5.12.3",
+        "@mui/system": "^5.12.3",
         "monaco-editor": "^0.23.0",
-        "react": "^17.0.1",
-        "react-dom": "^17.0.1",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
         "remotedev": "^0.2.9"
     },
     "devDependencies": {

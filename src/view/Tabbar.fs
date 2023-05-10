@@ -32,19 +32,24 @@ let tabBarElement model dispatch (classes: CssClasses) =
                       tab.disableRipple true
                       tab.label [
                         Html.span [
-                          prop.key "1"
-                          prop.style [style.flexGrow 1]
-                          prop.children [ Html.text t.Name ]
-                        ]
-                        Mui.iconButton [ 
-                          prop.key "2"
-                          iconButton.component' "div"
-                          prop.classes [classes.CloseBtn]
-                          prop.style [style.height 20; style.width 20; style.padding 0; style.marginLeft 10; style.marginRight 4]
-                          prop.onClick (fun e -> RemoveTab tabIndex |> dispatch; e.stopPropagation())
-                          iconButton.children (Icons.closeIcon [
-                            prop.style [style.height 16; style.width 18]
-                          ]) 
+                          prop.classes [classes.TabWrapper]
+                          prop.children [
+                            Html.span [
+                              prop.key "1"
+                              prop.style [style.flexGrow 1]
+                              prop.children [ Html.text t.Name ]
+                            ]
+                            Mui.iconButton [ 
+                              prop.key "2"
+                              iconButton.component' "div"
+                              prop.classes [classes.CloseBtn]
+                              prop.style [style.height 20; style.width 20; style.padding 0; style.marginLeft 10; style.marginRight 4]
+                              prop.onClick (fun e -> RemoveTab tabIndex |> dispatch; e.stopPropagation())
+                              iconButton.children (Icons.closeIcon [
+                                prop.style [style.height 16; style.width 18]
+                              ]) 
+                            ]
+                          ]
                         ]
                       ]
                     ]

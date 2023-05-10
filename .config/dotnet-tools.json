@@ -2,22 +2,22 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "fable": {
-      "version": "3.1.5",
+    "dotnet-outdated-tool": {
+      "version": "4.5.1",
       "commands": [
-        "fable"
+        "dotnet-outdated"
       ]
     },
     "femto": {
-      "version": "0.9.0",
+      "version": "0.17.1",
       "commands": [
         "femto"
       ]
     },
-    "dotnet-outdated-tool": {
-      "version": "3.1.1",
+    "fable": {
+      "version": "4.1.3",
       "commands": [
-        "dotnet-outdated"
+        "fable"
       ]
     }
   }

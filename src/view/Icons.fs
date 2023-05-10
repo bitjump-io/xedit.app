@@ -8,16 +8,16 @@ open Feliz.MaterialUI
 open Model
 
 let inline gitHubIcon b : ReactElement = 
-  ofImport "default" "@material-ui/icons/GitHub" (keyValueList CaseRules.LowerFirst b) []
+  Fable.React.Helpers.ofImport "default" "@mui/icons-material/GitHub" (keyValueList CaseRules.LowerFirst b) []
 
 let inline wrapTextIcon b : ReactElement = 
-  ofImport "default" "@material-ui/icons/WrapText" (keyValueList CaseRules.LowerFirst b) []
+  Fable.React.Helpers.ofImport "default" "@mui/icons-material/WrapText" (keyValueList CaseRules.LowerFirst b) []
 
 let inline addIcon b : ReactElement = 
-  ofImport "default" "@material-ui/icons/Add" (keyValueList CaseRules.LowerFirst b) []
+  Fable.React.Helpers.ofImport "default" "@mui/icons-material/Add" (keyValueList CaseRules.LowerFirst b) []
 
 let inline closeIcon b : ReactElement =
-  ofImport "default"  "@material-ui/icons/Close" (keyValueList CaseRules.LowerFirst b) []
+  Fable.React.Helpers.ofImport "default"  "@mui/icons-material/Close" (keyValueList CaseRules.LowerFirst b) []
 
 let inline verticalBar b: ReactElement =
   Mui.svgIcon [

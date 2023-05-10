@@ -52,6 +52,13 @@ let useStyles: unit -> CssClasses = Styles.makeStyles(fun styles theme ->
     ];
     TabsScrollButton = styles.create [
       style.custom ("min-width", "0 !important")
+    ];
+    TabWrapper = styles.create [
+      // Let tab width expand to tab label length.
+      style.width (length.percent 100)
+      style.paddingRight 2
+      style.display.inlineFlex
+      style.fontSize 16
     ]
   }
 )

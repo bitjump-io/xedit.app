@@ -6,10 +6,10 @@ open Feliz.MaterialUI
 // - https://cmeeren.github.io/Feliz.MaterialUI/#usage/themes
 // - https://material-ui.com/customization/theming/
 
-let defaultTheme = Styles.createMuiTheme()
+let defaultTheme = Styles.createTheme()
 
-let darkTheme = Styles.createMuiTheme([
-  theme.palette.type'.dark
+let darkTheme = Styles.createTheme([
+  theme.palette.mode.dark
   theme.palette.primary Colors.blue
   theme.palette.secondary Colors.teal
   theme.palette.background.default' defaultTheme.palette.grey.``900``
@@ -18,37 +18,37 @@ let darkTheme = Styles.createMuiTheme([
   theme.typography.h2.fontSize "2rem"
   theme.typography.h3.fontSize "1.5rem"
 
-  theme.overrides.muiAppBar.colorDefault [
-    style.backgroundColor defaultTheme.palette.grey.A400
+  theme.styleOverrides.muiAppBar.colorDefault [
+    style.backgroundColor "#303030"
   ]
-  theme.overrides.muiPopover.root [
+  theme.styleOverrides.muiPopover.root [
     // Need to set color directly because body is the parent.
     style.color "#ccc"
   ]
-  theme.overrides.muiPaper.root [
+  theme.styleOverrides.muiPaper.root [
     style.color "inherit"
-    style.backgroundColor defaultTheme.palette.grey.A400
+    style.backgroundColor "#303030"
   ]
-  theme.overrides.muiDrawer.paper [
+  theme.styleOverrides.muiDrawer.paper [
     style.backgroundColor defaultTheme.palette.grey.``900``
   ]
-  theme.props.muiAppBar [
+  theme.defaultProps.muiAppBar [
     appBar.color.default'
   ]
-  theme.overrides.muiButtonBase.root [
+  theme.styleOverrides.muiButtonBase.root [
     style.color "inherit"
     //style.custom ("&:hover", [style.borderRadius 4; style.backgroundColor.red; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
   ]
-  theme.overrides.muiButton.root [
+  theme.styleOverrides.muiButton.root [
     style.color "inherit"
     style.textTransform.none
     // Remove fontSize because it overwrites MuiInputBase-input fontSize.
     style.custom ("fontSize", "unset")
   ]
-  theme.overrides.muiInputBase.root [
+  theme.styleOverrides.muiInputBase.root [
     style.color (color.rgb(133, 133, 133))
   ]
-  theme.overrides.muiInputBase.input [
+  theme.styleOverrides.muiInputBase.input [
     style.borderRadius 4
     style.position.relative
     //style.backgroundColor.transparent
@@ -60,17 +60,17 @@ let darkTheme = Styles.createMuiTheme([
     // Nested style definition.
     //style.custom ("&:focus", [style.borderRadius 4; style.borderColor "#ff0000"; style.boxShadow (0, 0, 0, 20, "rgba(0,123,255,.25)")] )
   ]
-  theme.overrides.muiInputBase.inputMarginDense [
-    // Clear 3px paddingTop.
-    style.paddingTop length.auto
-  ]
-  theme.overrides.muiIconButton.root [
+  // theme.styleOverrides.muiInputBase.inputMarginDense [
+  //   // Clear 3px paddingTop.
+  //   style.paddingTop length.auto
+  // ]
+  theme.styleOverrides.muiIconButton.root [
     style.color (color.rgb(133, 133, 133))
   ]
-  theme.overrides.muiTabs.root [
+  theme.styleOverrides.muiTabs.root [
     //style.display.flex
   ]
-  theme.overrides.muiTab.root [
+  theme.styleOverrides.muiTab.root [
     // Let tab width expand to tab label length.
     style.maxWidth length.auto
     // No uppercase.
@@ -78,19 +78,15 @@ let darkTheme = Styles.createMuiTheme([
     // Make label area wider to show close button at right.
     style.padding (0, 0, 0, 5)
   ]
-  theme.overrides.muiSelect.root [
-    // No uppercase.
-    style.textTransform.none
-  ]
-  theme.overrides.muiSelect.icon [
+  // theme.styleOverrides.muiSelect.root [
+  //   // No uppercase.
+  //   style.textTransform.none
+  // ]
+  theme.styleOverrides.muiSelect.icon [
     // Instead of white show specific color.
     style.color (color.rgb(133, 133, 133))
   ]
-  theme.overrides.muiTab.wrapper [
-    style.flexDirection.row
-    style.paddingRight 2
-  ]
-  theme.overrides.muiFormControl.root [
+  theme.styleOverrides.muiFormControl.root [
     // undo vertical-align top
     style.verticalAlign.inheritFromParent
   ]
